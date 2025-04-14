@@ -3,6 +3,7 @@ package animation.admin;
 import animation.admin.dto.AdminCreate;
 import animation.admin.dto.AdminResponse;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class AdminService {
@@ -13,18 +14,18 @@ public class AdminService {
         this.adminRepository = adminRepository;
     }
 
-    public AdminResponse create(AdminCreate adminCreate) {
+    public AdminResponse create(String imageUrl, AdminCreate adminCreate) {
         Admin admin = new Admin(
                 adminCreate.loginId(),
                 adminCreate.nickName(),
                 adminCreate.password(),
-                adminCreate.imageUrl());
+                imageUrl);
         adminRepository.save(admin);
 
         return new AdminResponse(
                 admin.getId(),
                 adminCreate.loginId(),
                 adminCreate.nickName(),
-                adminCreate.imageUrl());
+                imageUrl);
     }
 }
