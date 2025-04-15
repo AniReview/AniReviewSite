@@ -1,14 +1,14 @@
-package animation.anime;
-
-import animation.anime.dto.*;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+//package animation.anime;
+//
+//import animation.anime.dto.*;
+//import lombok.extern.slf4j.Slf4j;
+//import org.springframework.stereotype.Service;
+//import org.springframework.web.reactive.function.client.WebClient;
+//import reactor.core.publisher.Mono;
+//import reactor.core.scheduler.Schedulers;
+//import java.time.Duration;
+//import java.time.LocalDateTime;
+//import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,20 +25,24 @@ public class AnimeService {
         this.animeRepository = animeRepository;
     }
 
-    public Mono<Anime> importAnimeById(Long malId) {
-        return fetchAnimeFromApi(malId)
-                .map(this::convertToAnimeResponse)
-                .flatMap(this::saveAnimeEntity)
-                .doOnSuccess(anime -> log.info("애니메이션 저장 완료: ID={}", anime.getId()))
-                .doOnError(e -> log.error("애니메이션 가져오기 실패: {}", e.getMessage()));
+    public Anime importAnimeById(Long malId) {
+        JikanApiResponse apiResponse = fetchAnimeFromApi(malId);
+
+        AnimeResponse animeResponse = convertToAnimeResponse(apiResponse);
+
+        Anime anime = saveAnimeEntity(animeResponse);
+
+        log.info("애니메이션 저장 완료: ID={}", anime.getId());
+        return anime;
     }
 
-    private Mono<JikanApiResponse> fetchAnimeFromApi(Long malId) {
+    private JikanApiResponse fetchAnimeFromApi(Long malId) {
         return webClient.get()
                 .uri("/anime/{id}", malId)
                 .retrieve()
                 .bodyToMono(JikanApiResponse.class)
-                .timeout(Duration.ofSeconds(30));
+                .timeout(Duration.ofSeconds(30))
+                .block();
     }
 
     private AnimeResponse convertToAnimeResponse(JikanApiResponse apiResponse) {
