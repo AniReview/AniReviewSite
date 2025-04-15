@@ -1,4 +1,4 @@
-package animation.admin;
+package animation;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;
