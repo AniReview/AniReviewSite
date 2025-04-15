@@ -40,6 +40,7 @@ public class Anime extends BaseEntity {
 
     private String duration;
 
+
     protected Anime() {
     }
 
