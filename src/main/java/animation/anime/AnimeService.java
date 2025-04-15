@@ -1,14 +1,14 @@
-//package animation.anime;
-//
-//import animation.anime.dto.*;
-//import lombok.extern.slf4j.Slf4j;
-//import org.springframework.stereotype.Service;
-//import org.springframework.web.reactive.function.client.WebClient;
-//import reactor.core.publisher.Mono;
-//import reactor.core.scheduler.Schedulers;
-//import java.time.Duration;
-//import java.time.LocalDateTime;
-//import java.time.format.DateTimeFormatter;
+package animation.anime;
+
+import animation.anime.dto.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import animation.anime.dto.AnimeResponse;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,15 +25,12 @@ public class AnimeService {
         this.animeRepository = animeRepository;
     }
 
-    public Anime importAnimeById(Long malId) {
+    public AnimeResponse importAnimeById(Long malId) {
         JikanApiResponse apiResponse = fetchAnimeFromApi(malId);
-
-        AnimeResponse animeResponse = convertToAnimeResponse(apiResponse);
-
-        Anime anime = saveAnimeEntity(animeResponse);
-
+        AnimeResponse response = convertToAnimeResponse(apiResponse);
+        Anime anime = saveAnimeEntity(response);
         log.info("애니메이션 저장 완료: ID={}", anime.getId());
-        return anime;
+        return toAnimeResponse(anime);
     }
 
     private JikanApiResponse fetchAnimeFromApi(Long malId) {
@@ -95,25 +92,39 @@ public class AnimeService {
         }
     }
 
-    private Mono<Anime> saveAnimeEntity(AnimeResponse response) {
-        return Mono.fromCallable(() -> {
-            Anime anime = new Anime(
-                    response.title(),
-                    response.images(),
-                    response.type(),
-                    "Unknown", // 감독 정보는 API에 명확히 제공되지 않음
-                    response.genres(),
-                    response.episodes() != null ? response.episodes() : 0,
-                    response.rating(),
-                    response.aired(),
-                    response.synopsis(),
-                    response.studios(),
-                    response.duration()
-            );
+    private Anime saveAnimeEntity(AnimeResponse response) {
+        Anime anime = new Anime(
+                response.title(),
+                response.images(),
+                response.type(),
+                "Unknown", // 감독 정보는 API에 명확히 제공되지 않음
+                response.genres(),
+                response.episodes() != null ? response.episodes() : 0,
+                response.rating(),
+                response.aired(),
+                response.synopsis(),
+                response.studios(),
+                response.duration()
+        );
 
-            return animeRepository.save(anime);
-        }).subscribeOn(Schedulers.boundedElastic()); // JPA 작업을 위한 별도 스레드
+        return animeRepository.save(anime);
     }
+    public AnimeResponse toAnimeResponse(Anime anime) {
+        return new AnimeResponse(
+                anime.getId(),
+                anime.getTitle(),
+                anime.getType(),
+                anime.getImageUrl(),
+                anime.getEpisodes(),
+                anime.getRating(),
+                anime.getAired(),
+                anime.getSynopsis(),
+                anime.getGenres(),
+                anime.getStudios(),
+                anime.getDuration()
+        );
+    }
+
 }
 
 
