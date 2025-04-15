@@ -99,7 +99,7 @@ public class AnimeService {
                 response.type(),
                 "Unknown", // 감독 정보는 API에 명확히 제공되지 않음
                 response.genres(),
-                response.episodes() != null ? response.episodes() : 0,
+                response.episodes(),
                 response.rating(),
                 response.aired(),
                 response.synopsis(),

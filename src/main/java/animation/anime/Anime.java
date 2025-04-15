@@ -33,7 +33,7 @@ public class Anime extends BaseEntity {
 
     private LocalDateTime aired;
 
-    @Column(length = 10000)
+    @Column(columnDefinition = "TEXT")
     private String synopsis;
 
     private String studios;
