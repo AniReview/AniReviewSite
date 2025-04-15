@@ -14,27 +14,18 @@ import java.io.IOException;
 public class AdminRestController {
 
     private final AdminService adminService;
-    @Autowired
-    private S3Service s3Service;
+    private final S3Service s3Service;
 
-    public AdminRestController(AdminService adminService) {
+    public AdminRestController(AdminService adminService, S3Service s3Service) {
         this.adminService = adminService;
+        this.s3Service = s3Service;
     }
 
     @PostMapping("/profileupload")
-    public ResponseEntity<String> uploadFile(@RequestParam(value = "images") MultipartFile[] files) {
-        for (MultipartFile file : files) {
-            try {
-                String url = s3Service.uploadFile(file);
-            } catch (IOException e) {
-                return ResponseEntity.internalServerError().body("File upload failed: " + e.getMessage());
-            }
-        }
-        return ResponseEntity.ok("업로드 성공");
-    }
-
-    @PostMapping("/admins")
-    public AdminResponse create(@RequestBody AdminCreate adminCreate) {
-        return adminService.create(adminCreate);
+    public AdminResponse create(
+            @RequestPart(value = "images") MultipartFile files,
+            @RequestPart AdminCreate adminCreate) throws IOException {
+        String url = s3Service.uploadFile(files);
+        return adminService.create(url,adminCreate);
     }
 }
