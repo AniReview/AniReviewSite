@@ -10,7 +10,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import animation.anime.dto.AnimeCreateResponse;
+import animation.anime.dto.AnimeData;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -29,7 +29,7 @@ public class AnimeService {
 
     public AnimeCreateResponse importAnimeById(Long malId) {
         JikanApiResponse apiResponse = fetchAnimeFromApi(malId);
-        AnimeCreateResponse response = convertToAnimeResponse(apiResponse);
+        AnimeData response = convertToAnimeResponse(apiResponse);
         Anime anime = saveAnimeEntity(response);
         log.info("애니메이션 저장 완료: ID={}", anime.getId());
         return toAnimeResponse(anime);
@@ -44,7 +44,7 @@ public class AnimeService {
                 .block();
     }
 
-    private AnimeCreateResponse convertToAnimeResponse(JikanApiResponse apiResponse) {
+    private AnimeData convertToAnimeResponse(JikanApiResponse apiResponse) {
         JikanData data = apiResponse.data();
 
         // 이미지 URL 추출
@@ -67,7 +67,7 @@ public class AnimeService {
         LocalDateTime airedDate = parseAiredDate(data.aired());
 
 
-        return new AnimeCreateResponse(
+        return new AnimeData(
                 data.title(),
                 data.type(),
                 imageUrl,
@@ -96,7 +96,7 @@ public class AnimeService {
         }
     }
 
-    private Anime saveAnimeEntity(AnimeCreateResponse response) {
+    private Anime saveAnimeEntity(AnimeData response) {
         Anime anime = new Anime(
                 response.title(),
                 response.images(),
@@ -117,6 +117,7 @@ public class AnimeService {
     }
     public AnimeCreateResponse toAnimeResponse(Anime anime) {
         return new AnimeCreateResponse(
+                anime.getId(),
                 anime.getTitle(),
                 anime.getType(),
                 anime.getImageUrl(),

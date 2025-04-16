@@ -38,7 +38,7 @@ public class animeRestAssuredTest {
 
 
     @Test
-    void saveAnime_success() {
+    void 애니메이션생성테스트() {
         RestAssured
                 .given()
                 .contentType(ContentType.JSON)

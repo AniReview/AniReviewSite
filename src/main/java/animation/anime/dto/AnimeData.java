@@ -3,8 +3,7 @@ package animation.anime.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public record AnimeCreateResponse(
-        Long id,
+public record AnimeData(
         String title,
         String type,
         String images,

@@ -1,6 +1,7 @@
 package animation.anime;
 
 import animation.anime.dto.AnimeCreateResponse;
+import animation.anime.dto.AnimeData;
 import animation.anime.dto.AnimePageResponse;
 import animation.anime.dto.AnimeStatus;
 import lombok.RequiredArgsConstructor;
