@@ -1,7 +1,9 @@
 package animation.anime;
 
 import animation.anime.dto.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import java.time.Duration;
@@ -15,15 +17,13 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class AnimeService {
 
     private final WebClient webClient;
     private final AnimeRepository animeRepository;
+    private final AnimeQueryRepository animeQueryRepository;
 
-    public AnimeService(WebClient webClient, AnimeRepository animeRepository) {
-        this.webClient = webClient;
-        this.animeRepository = animeRepository;
-    }
 
     public AnimeCreateResponse importAnimeById(Long malId) {
         JikanApiResponse apiResponse = fetchAnimeFromApi(malId);
@@ -129,16 +129,9 @@ public class AnimeService {
         );
     }
 
-    public AnimePageResponse findAll() {
-        List<Anime> animeList = animeRepository.findAll();
-        List<AnimeResponse> responseList = animeList.stream().map(
-                a -> new AnimeResponse(
-                        a.getId(),
-                        a.getImageUrl(),
-                        a.getTitle()))
-                .toList();
-
-        return new AnimePageResponse(responseList);
+    public AnimePageResponse findAll(Pageable pageable, AnimeFilter filter) {
+        List<AnimeResponse> animeResponseList = animeQueryRepository.findAll(pageable, filter);
+        return new AnimePageResponse(animeResponseList);
     }
 
 }

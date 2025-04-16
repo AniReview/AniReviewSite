@@ -42,9 +42,28 @@ public class Anime extends BaseEntity {
 
     private boolean airing;
 
+    private int bookmark = 0;
+
+    private boolean isDeleted = false;
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
     protected Anime() {
     }
 
+    public void increaseBookmark()  {
+        bookmark++;
+    }
+
+    public void decreaseBookmark() {
+        bookmark--;
+    }
+
+    public boolean parseUpComing() {
+        return true;
+    }
 
     public Anime(String title, String imageUrl, String type, String supervision, List<String> genres, int episodes, String rating, LocalDateTime aired, String synopsis, String productionCompany, String duration, boolean airing) {
         this.title = title;

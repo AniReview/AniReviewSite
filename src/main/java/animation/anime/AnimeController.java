@@ -3,10 +3,9 @@ package animation.anime;
 import animation.anime.dto.AnimeCreateResponse;
 import animation.anime.dto.AnimePageResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,8 +19,12 @@ public class AnimeController {
     }
 
     @GetMapping("/animes")
-    public AnimePageResponse findAll() {
-        return animeService.findAll();
+    public AnimePageResponse findAll(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "ALL") AnimeFilter airing) {
+        Pageable pageable = PageRequest.of(page-1, size);
+        return animeService.findAll(pageable, airing);
     }
 }
 
