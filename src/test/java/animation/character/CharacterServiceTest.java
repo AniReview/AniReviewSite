@@ -2,6 +2,7 @@ package animation.character;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 import animation.admin.Admin;
@@ -57,7 +58,8 @@ class CharacterServiceTest {
         when(builder.baseUrl(anyString())).thenReturn(builder);
         when(builder.build()).thenReturn(webClient);
 
-       characterService = new CharacterService( builder,characterRepository, characterQueryRepository, adminRepository); // 생성자 직접 사용
+
+        characterService = new CharacterService( builder,characterRepository, characterQueryRepository, adminRepository); // 생성자 직접 사용
 
         admin = new Admin("testId", "password", "testNickName", "testImage");
 
@@ -105,7 +107,7 @@ class CharacterServiceTest {
         CharacterUpdateRequest request = new CharacterUpdateRequest("수정이름", "updated.jpg", "수정소개");
 
         when(adminRepository.findByLoginId(adminLoginId)).thenReturn(Optional.of(admin));
-        when(characterRepository.findById(characterId)).thenReturn(Optional.of(character));
+        when(characterRepository.findByIdAndIsDeletedFalse(characterId)).thenReturn(Optional.of(character));
 
         // when
         CharacterUpdateResponse response = characterService.update(adminLoginId, characterId, request);
@@ -140,11 +142,23 @@ class CharacterServiceTest {
         CharacterUpdateRequest request = new CharacterUpdateRequest("수정이름", "updated.jpg", "수정소개");
 
         when(adminRepository.findByLoginId(adminLoginId)).thenReturn(Optional.of(admin));
-        when(characterRepository.findById(characterId)).thenReturn(Optional.empty());
+        when(characterRepository.findByIdAndIsDeletedFalse(characterId)).thenReturn(Optional.empty());
 
         // when & then
         assertThatThrownBy(() -> characterService.update(adminLoginId, characterId, request))
                 .isInstanceOf(NoSuchElementException.class)
                 .hasMessageContaining("캐릭터를 찾을 수 없습니다.");
+    }
+
+    @Test
+    void findById_삭제된_캐릭터_예외() {
+        // given
+        Long characterId = 1L;
+        given(characterRepository.findByIdAndIsDeletedFalse(characterId)).willReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> characterService.findById(characterId))
+                .isInstanceOf(NoSuchElementException.class)
+                .hasMessage("캐릭터를 찾을 수 없습니다.");
     }
 }
