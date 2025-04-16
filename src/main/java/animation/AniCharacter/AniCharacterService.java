@@ -48,7 +48,7 @@ public class AniCharacterService {
         List<JikanAniCharCreateResponse> result = new ArrayList<>();
 
         for (JikanCharacterData charData : apiResponse.data()) {
-            Long charMalId = charData.character().malId();
+            Long charMalId = charData.character().mal_id();
             Character character = characterRepository.findByMalId(charMalId)
                     .orElseThrow(() -> new NoSuchElementException("해당 캐릭터는 db에 존재하지 않습니다."));
 
