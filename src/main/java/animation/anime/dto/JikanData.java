@@ -14,5 +14,6 @@ public record JikanData(
         String synopsis,
         List<JikanGenre> genres,
         List<JikanStudio> studios,
-        String duration
+        String duration,
+        boolean airing
 ) {}

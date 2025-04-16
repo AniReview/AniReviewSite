@@ -1,33 +1,35 @@
 package animation.anime;
 
 import animation.anime.dto.*;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import animation.anime.dto.AnimeResponse;
+import animation.anime.dto.AnimeCreateResponse;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class AnimeService {
 
     private final WebClient webClient;
     private final AnimeRepository animeRepository;
+    private final AnimeQueryRepository animeQueryRepository;
 
-    public AnimeService(WebClient webClient, AnimeRepository animeRepository) {
-        this.webClient = webClient;
-        this.animeRepository = animeRepository;
-    }
 
-    public AnimeResponse importAnimeById(Long malId) {
+    public AnimeCreateResponse importAnimeById(Long malId) {
         JikanApiResponse apiResponse = fetchAnimeFromApi(malId);
-        AnimeResponse response = convertToAnimeResponse(apiResponse);
+        AnimeCreateResponse response = convertToAnimeResponse(apiResponse);
         Anime anime = saveAnimeEntity(response);
         log.info("애니메이션 저장 완료: ID={}", anime.getId());
         return toAnimeResponse(anime);
@@ -42,7 +44,7 @@ public class AnimeService {
                 .block();
     }
 
-    private AnimeResponse convertToAnimeResponse(JikanApiResponse apiResponse) {
+    private AnimeCreateResponse convertToAnimeResponse(JikanApiResponse apiResponse) {
         JikanData data = apiResponse.data();
 
         // 이미지 URL 추출
@@ -64,8 +66,8 @@ public class AnimeService {
         // 방영일 변환
         LocalDateTime airedDate = parseAiredDate(data.aired());
 
-        return new AnimeResponse(
-                data.mal_id(),
+
+        return new AnimeCreateResponse(
                 data.title(),
                 data.type(),
                 imageUrl,
@@ -75,7 +77,9 @@ public class AnimeService {
                 data.synopsis(),
                 genres,
                 studios,
-                data.duration()
+                data.duration(),
+                data.airing(),
+                data.mal_id()
         );
     }
 
@@ -92,26 +96,27 @@ public class AnimeService {
         }
     }
 
-    private Anime saveAnimeEntity(AnimeResponse response) {
+    private Anime saveAnimeEntity(AnimeCreateResponse response) {
         Anime anime = new Anime(
                 response.title(),
                 response.images(),
                 response.type(),
                 "Unknown", // 감독 정보는 API에 명확히 제공되지 않음
                 response.genres(),
-                response.episodes(),
+                response.episodes() != null ? response.episodes() : 0,
                 response.rating(),
                 response.aired(),
                 response.synopsis(),
                 response.studios(),
-                response.duration()
+                response.duration(),
+                response.airing(),
+                response.malId()
         );
 
         return animeRepository.save(anime);
     }
-    public AnimeResponse toAnimeResponse(Anime anime) {
-        return new AnimeResponse(
-                anime.getId(),
+    public AnimeCreateResponse toAnimeResponse(Anime anime) {
+        return new AnimeCreateResponse(
                 anime.getTitle(),
                 anime.getType(),
                 anime.getImageUrl(),
@@ -121,8 +126,24 @@ public class AnimeService {
                 anime.getSynopsis(),
                 anime.getGenres(),
                 anime.getStudios(),
-                anime.getDuration()
+                anime.getDuration(),
+                anime.isAiring(),
+                anime.getMalId()
         );
+    }
+
+    public AnimePageResponse findAll(Pageable pageable, AnimeFilter filter) {
+        List<AnimeResponse> animeResponseList = animeQueryRepository.findAll(pageable, filter);
+        return new AnimePageResponse(animeResponseList);
+    }
+
+    @Transactional
+    public AnimeStatus delete(Long animeId) {
+        Anime anime = animeRepository.findById(animeId).orElseThrow(() ->
+                new NoSuchElementException("애니메이션이 없습니다. id : " + animeId));
+        anime.delete();
+
+        return new AnimeStatus(anime.getId(), anime.isDeleted());
     }
 
 }
