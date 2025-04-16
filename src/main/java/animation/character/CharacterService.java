@@ -38,14 +38,14 @@ public class CharacterService {
             throw new EmptyDataException("데이터가 비어있습니다.");
         }
 
-
         CharacterData data = response.data();
 
         characterRepository.save(
                 new Character(
                         data.name(),
                         data.images().jpg().imageUrl(),
-                        data.about()
+                        data.about(),
+                        data.mal_id()
                 )
         );
         return response;

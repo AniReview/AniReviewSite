@@ -23,13 +23,16 @@ public class Character extends BaseEntity {
 
     private boolean isDeleted = false;
 
+    private Long malId;
+
     protected Character() {
     }
 
-    public Character(String name, String imageUrl, String about) {
+    public Character(String name, String imageUrl, String about, Long malId) {
         this.name = name;
         this.imageUrl = imageUrl;
         this.about = about;
+        this.malId = malId;
     }
 
     public void update(String name, String imageUrl, String about) {

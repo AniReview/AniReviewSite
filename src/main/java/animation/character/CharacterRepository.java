@@ -7,5 +7,6 @@ import java.util.Optional;
 public interface CharacterRepository extends JpaRepository<Character, Long> {
 
     Optional<Character> findByIdAndIsDeletedFalse(Long id);
+    Optional<Character> findByMalId(Long malId);
 
 }
