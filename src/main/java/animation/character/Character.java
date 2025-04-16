@@ -4,8 +4,8 @@ import animation.utils.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
-@Entity
 @Getter
+@Entity
 public class Character extends BaseEntity {
 
     @Id
@@ -21,6 +21,8 @@ public class Character extends BaseEntity {
 
     private int favoriteCount = 0;
 
+    private boolean isDeleted = false;
+
     protected Character() {
     }
 
@@ -28,5 +30,19 @@ public class Character extends BaseEntity {
         this.name = name;
         this.imageUrl = imageUrl;
         this.about = about;
+    }
+
+    public void update(String name, String imageUrl, String about) {
+        this.name = name;
+        this.imageUrl = imageUrl;
+        this.about = about;
+    }
+
+    public void increaseFavoriteCount() {
+        this.favoriteCount++;
+    }
+
+    public void delete() {
+        this.isDeleted = true;
     }
 }
