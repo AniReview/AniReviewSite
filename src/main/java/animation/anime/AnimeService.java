@@ -7,7 +7,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import animation.anime.dto.AnimeResponse;
+import animation.anime.dto.AnimeCreateResponse;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,9 +25,9 @@ public class AnimeService {
         this.animeRepository = animeRepository;
     }
 
-    public AnimeResponse importAnimeById(Long malId) {
+    public AnimeCreateResponse importAnimeById(Long malId) {
         JikanApiResponse apiResponse = fetchAnimeFromApi(malId);
-        AnimeResponse response = convertToAnimeResponse(apiResponse);
+        AnimeCreateResponse response = convertToAnimeResponse(apiResponse);
         Anime anime = saveAnimeEntity(response);
         log.info("애니메이션 저장 완료: ID={}", anime.getId());
         return toAnimeResponse(anime);
@@ -42,7 +42,7 @@ public class AnimeService {
                 .block();
     }
 
-    private AnimeResponse convertToAnimeResponse(JikanApiResponse apiResponse) {
+    private AnimeCreateResponse convertToAnimeResponse(JikanApiResponse apiResponse) {
         JikanData data = apiResponse.data();
 
         // 이미지 URL 추출
@@ -64,7 +64,8 @@ public class AnimeService {
         // 방영일 변환
         LocalDateTime airedDate = parseAiredDate(data.aired());
 
-        return new AnimeResponse(
+
+        return new AnimeCreateResponse(
                 data.mal_id(),
                 data.title(),
                 data.type(),
@@ -75,7 +76,8 @@ public class AnimeService {
                 data.synopsis(),
                 genres,
                 studios,
-                data.duration()
+                data.duration(),
+                data.airing()
         );
     }
 
@@ -92,7 +94,7 @@ public class AnimeService {
         }
     }
 
-    private Anime saveAnimeEntity(AnimeResponse response) {
+    private Anime saveAnimeEntity(AnimeCreateResponse response) {
         Anime anime = new Anime(
                 response.title(),
                 response.images(),
@@ -104,13 +106,14 @@ public class AnimeService {
                 response.aired(),
                 response.synopsis(),
                 response.studios(),
-                response.duration()
+                response.duration(),
+                response.airing()
         );
 
         return animeRepository.save(anime);
     }
-    public AnimeResponse toAnimeResponse(Anime anime) {
-        return new AnimeResponse(
+    public AnimeCreateResponse toAnimeResponse(Anime anime) {
+        return new AnimeCreateResponse(
                 anime.getId(),
                 anime.getTitle(),
                 anime.getType(),
@@ -121,8 +124,21 @@ public class AnimeService {
                 anime.getSynopsis(),
                 anime.getGenres(),
                 anime.getStudios(),
-                anime.getDuration()
+                anime.getDuration(),
+                anime.isAiring()
         );
+    }
+
+    public AnimePageResponse findAll() {
+        List<Anime> animeList = animeRepository.findAll();
+        List<AnimeResponse> responseList = animeList.stream().map(
+                a -> new AnimeResponse(
+                        a.getId(),
+                        a.getImageUrl(),
+                        a.getTitle()))
+                .toList();
+
+        return new AnimePageResponse(responseList);
     }
 
 }

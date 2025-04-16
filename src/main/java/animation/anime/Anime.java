@@ -40,11 +40,13 @@ public class Anime extends BaseEntity {
 
     private String duration;
 
+    private boolean airing;
 
     protected Anime() {
     }
 
-    public Anime(String title, String imageUrl, String type, String supervision, List<String> genres, int episodes, String rating, LocalDateTime aired, String synopsis, String productionCompany, String duration) {
+
+    public Anime(String title, String imageUrl, String type, String supervision, List<String> genres, int episodes, String rating, LocalDateTime aired, String synopsis, String productionCompany, String duration, boolean airing) {
         this.title = title;
         this.imageUrl = imageUrl;
         this.type = type;
@@ -56,5 +58,6 @@ public class Anime extends BaseEntity {
         this.synopsis = synopsis;
         this.studios = productionCompany;
         this.duration = duration;
+        this.airing = airing;
     }
 }

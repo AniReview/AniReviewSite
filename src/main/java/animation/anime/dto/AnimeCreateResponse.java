@@ -1,19 +1,20 @@
 package animation.anime.dto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-// API 데이터 중 필요한 부분만 매핑
-public record JikanData(
+public record AnimeCreateResponse(
         Long mal_id,
         String title,
         String type,
-        JikanImages images,
+        String images,
         Integer episodes,
         String rating,
-        JikanAired aired,
+        LocalDateTime aired,
         String synopsis,
-        List<JikanGenre> genres,
-        List<JikanStudio> studios,
+        List<String> genres,
+        String studios,
         String duration,
         boolean airing
-) {}
+                            ) {
+}

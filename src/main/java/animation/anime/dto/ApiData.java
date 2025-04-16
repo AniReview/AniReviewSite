@@ -12,5 +12,6 @@ public record ApiData(Long mal_id,
                       String synopsis,
                       List<String> genres,
                       List<String> studios,
-                      String duration) {
+                      String duration,
+                      boolean airing) {
 }

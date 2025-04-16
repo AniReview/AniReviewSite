@@ -1,6 +1,7 @@
 package animation.anime;
 
-import animation.anime.dto.AnimeResponse;
+import animation.anime.dto.AnimeCreateResponse;
+import animation.anime.dto.AnimePageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,9 +14,14 @@ public class AnimeController {
 
     private final AnimeService animeService;
 
-    @PostMapping("/anime/{malId}")
-    public AnimeResponse importAnime(@PathVariable Long malId) {
+    @PostMapping("/animes/{malId}")
+    public AnimeCreateResponse importAnime(@PathVariable Long malId) {
          return animeService.importAnimeById(malId);
+    }
+
+    @GetMapping("/animes")
+    public AnimePageResponse findAll() {
+        return animeService.findAll();
     }
 }
 
