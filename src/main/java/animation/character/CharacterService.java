@@ -66,7 +66,7 @@ public class CharacterService {
     }
 
     public CharacterDetailResponse findById(Long characterId) {
-        Character character = characterRepository.findById(characterId)
+        Character character = characterRepository.findByIdAndIsDeletedFalse(characterId)
                 .orElseThrow(() -> new NoSuchElementException("캐릭터를 찾을 수 없습니다."));
         return new CharacterDetailResponse(
                 characterId,
@@ -81,7 +81,7 @@ public class CharacterService {
         Admin admin = adminRepository.findByLoginId(adminLoginId)
                 .orElseThrow(() -> new NoSuchElementException("관리자를 찾을 수 없습니다."));
 
-        Character character = characterRepository.findById(characterId)
+        Character character = characterRepository.findByIdAndIsDeletedFalse(characterId)
                 .orElseThrow(() -> new NoSuchElementException("캐릭터를 찾을 수 없습니다."));
 
         character.update(
@@ -103,8 +103,8 @@ public class CharacterService {
         adminRepository.findByLoginId(adminLoginId)
                 .orElseThrow(()-> new NoSuchElementException("관리자를 찾을 수 없습니다."));
 
-        Character character = characterRepository.findById(characterId)
-                .orElseThrow(() -> new NoSuchElementException("캐릭터를 찾을 수 없습니다."));
+        Character character = characterRepository.findByIdAndIsDeletedFalse(characterId)
+                .orElseThrow(() -> new NoSuchElementException("이미 삭제된 캐릭터 입니다."));
 
         character.delete();
 
