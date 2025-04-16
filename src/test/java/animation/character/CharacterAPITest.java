@@ -59,7 +59,8 @@ public class CharacterAPITest {
             Character c = new Character(
                     initial + "캐릭터" + String.format("%02d", i),
                     "image" + i + ".jpg",
-                    "소개" + i
+                    "소개" + i,
+                    1L
             );
             // i번 만큼 increaseFavoriteCount 호출
             for (int j = 0; j < i; j++) {

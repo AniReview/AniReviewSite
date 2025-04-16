@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Arrays;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+@ActiveProfiles("test")
 class CharacterServiceTest {
 
     @Mock
@@ -63,7 +65,7 @@ class CharacterServiceTest {
 
         admin = new Admin("testId", "password", "testNickName", "testImage");
 
-        character = new Character("캐릭터", "image.jpg", "소개");
+        character = new Character("캐릭터", "image.jpg", "소개", 1L);
     }
 
 
