@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record AnimeCreateResponse(
-        Long mal_id,
         String title,
         String type,
         String images,
@@ -15,6 +14,7 @@ public record AnimeCreateResponse(
         List<String> genres,
         String studios,
         String duration,
-        boolean airing
+        boolean airing,
+        Long malId
                             ) {
 }

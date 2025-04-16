@@ -1,6 +1,7 @@
 package animation.anime;
 
 import animation.anime.dto.*;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +13,7 @@ import java.time.format.DateTimeFormatter;
 import animation.anime.dto.AnimeCreateResponse;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -66,7 +68,6 @@ public class AnimeService {
 
 
         return new AnimeCreateResponse(
-                data.mal_id(),
                 data.title(),
                 data.type(),
                 imageUrl,
@@ -77,7 +78,8 @@ public class AnimeService {
                 genres,
                 studios,
                 data.duration(),
-                data.airing()
+                data.airing(),
+                data.mal_id()
         );
     }
 
@@ -101,20 +103,20 @@ public class AnimeService {
                 response.type(),
                 "Unknown", // 감독 정보는 API에 명확히 제공되지 않음
                 response.genres(),
-                response.episodes(),
+                response.episodes() != null ? response.episodes() : 0,
                 response.rating(),
                 response.aired(),
                 response.synopsis(),
                 response.studios(),
                 response.duration(),
-                response.airing()
+                response.airing(),
+                response.malId()
         );
 
         return animeRepository.save(anime);
     }
     public AnimeCreateResponse toAnimeResponse(Anime anime) {
         return new AnimeCreateResponse(
-                anime.getId(),
                 anime.getTitle(),
                 anime.getType(),
                 anime.getImageUrl(),
@@ -125,13 +127,23 @@ public class AnimeService {
                 anime.getGenres(),
                 anime.getStudios(),
                 anime.getDuration(),
-                anime.isAiring()
+                anime.isAiring(),
+                anime.getMalId()
         );
     }
 
     public AnimePageResponse findAll(Pageable pageable, AnimeFilter filter) {
         List<AnimeResponse> animeResponseList = animeQueryRepository.findAll(pageable, filter);
         return new AnimePageResponse(animeResponseList);
+    }
+
+    @Transactional
+    public AnimeStatus delete(Long animeId) {
+        Anime anime = animeRepository.findById(animeId).orElseThrow(() ->
+                new NoSuchElementException("애니메이션이 없습니다. id : " + animeId));
+        anime.delete();
+
+        return new AnimeStatus(anime.getId(), anime.isDeleted());
     }
 
 }

@@ -2,6 +2,7 @@ package animation.anime;
 
 import animation.anime.dto.AnimeCreateResponse;
 import animation.anime.dto.AnimePageResponse;
+import animation.anime.dto.AnimeStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +26,11 @@ public class AnimeController {
             @RequestParam(defaultValue = "ALL") AnimeFilter airing) {
         Pageable pageable = PageRequest.of(page-1, size);
         return animeService.findAll(pageable, airing);
+    }
+
+    @DeleteMapping("/animes/{animeId}")
+    public AnimeStatus delete(@PathVariable Long animeId) {
+        return animeService.delete(animeId);
     }
 }
 

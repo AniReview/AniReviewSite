@@ -2,7 +2,7 @@ package animation.anime.dto;
 
 import java.util.List;
 
-public record ApiData(Long mal_id,
+public record ApiData(
                       String title,
                       String type,
                       String images,
@@ -13,5 +13,6 @@ public record ApiData(Long mal_id,
                       List<String> genres,
                       List<String> studios,
                       String duration,
-                      boolean airing) {
+                      boolean airing,
+                      Long malId) {
 }

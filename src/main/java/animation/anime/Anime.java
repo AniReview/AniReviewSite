@@ -3,8 +3,6 @@ package animation.anime;
 import animation.utils.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,8 +44,14 @@ public class Anime extends BaseEntity {
 
     private boolean isDeleted = false;
 
+    private Long malId;
+
     public boolean isDeleted() {
         return isDeleted;
+    }
+
+    public void delete() {
+        isDeleted = true;
     }
 
     protected Anime() {
@@ -65,7 +69,7 @@ public class Anime extends BaseEntity {
         return true;
     }
 
-    public Anime(String title, String imageUrl, String type, String supervision, List<String> genres, int episodes, String rating, LocalDateTime aired, String synopsis, String productionCompany, String duration, boolean airing) {
+    public Anime(String title, String imageUrl, String type, String supervision, List<String> genres, int episodes, String rating, LocalDateTime aired, String synopsis, String productionCompany, String duration, boolean airing, Long malId) {
         this.title = title;
         this.imageUrl = imageUrl;
         this.type = type;
@@ -78,5 +82,6 @@ public class Anime extends BaseEntity {
         this.studios = productionCompany;
         this.duration = duration;
         this.airing = airing;
+        this.malId = malId;
     }
 }
