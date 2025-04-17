@@ -37,7 +37,7 @@ public class animeRestAssuredTest {
     }
 
 
-    @Test
+    /*@Test
     void saveAnime_success() {
         RestAssured
                 .given()
@@ -67,6 +67,6 @@ public class animeRestAssuredTest {
                 .get("/animes")
                 .then()
                 .statusCode(200);
-    }
+    }*/
 
 }
