@@ -72,26 +72,36 @@ public class AniCharacterService {
 
         List<AniCharacter> byAnimeId = aniCharacterRepository.findByAnime_Id(animeId);
 
-        return byAnimeId.stream()
-                .map(aniCharacter -> new AnimeCharactersResponse(
-                        aniCharacter.getAnime().getId(),
+        List<CharacterResponse> characterResponses = byAnimeId.stream()
+                .map(aniCharacter -> new CharacterResponse(
                         aniCharacter.getCharacter().getId(),
+                        aniCharacter.getCharacter().getName(),
                         aniCharacter.getCharacter().getImageUrl(),
-                        aniCharacter.getCharacter().getName()))
+                        aniCharacter.getCharacter().getFavoriteCount()
+                ))
                 .toList();
+
+        return List.of(new AnimeCharactersResponse(
+                animeId,
+                characterResponses
+        ));
 
     }
 
     public List<CharacterAnimesResponse> getCharacterAnimes(Long characterId) {
         List<AniCharacter> byCharacterId = aniCharacterRepository.findByCharacter_Id(characterId);
 
-        return byCharacterId.stream()
-                .map(characterAni -> new CharacterAnimesResponse(
-                        characterAni.getCharacter().getId(),
+        List<AnimeResponse> animeResponses = byCharacterId.stream()
+                .map(characterAni -> new AnimeResponse(
                         characterAni.getAnime().getId(),
                         characterAni.getAnime().getImageUrl(),
                         characterAni.getAnime().getTitle()
                 ))
                 .toList();
+
+        return List.of(new CharacterAnimesResponse(
+                characterId,
+                animeResponses
+        ));
     }
 }
