@@ -1,4 +1,4 @@
-package animation.board;
+package animation.board.dto;
 
 import java.time.LocalDateTime;
 

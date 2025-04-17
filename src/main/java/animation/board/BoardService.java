@@ -1,5 +1,8 @@
 package animation.board;
 
+import animation.board.dto.BoardCreateResponse;
+import animation.board.dto.BoardResponse;
+import animation.board.dto.BoardSaveRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,5 +25,12 @@ public class BoardService {
         );
     }
 
-
+    public List<BoardResponse> read() {
+        return boardRepository.findAll().stream()
+                .map(board -> new BoardResponse(
+                        board.getId(),
+                        board.getBoardTitle()
+                ))
+                .toList();
+    }
 }
