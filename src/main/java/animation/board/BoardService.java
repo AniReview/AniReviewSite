@@ -3,9 +3,13 @@ package animation.board;
 import animation.board.dto.BoardCreateResponse;
 import animation.board.dto.BoardResponse;
 import animation.board.dto.BoardSaveRequest;
+import animation.board.dto.BoardUpdateResponse;
+import jakarta.persistence.GeneratedValue;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class BoardService {
@@ -32,5 +36,12 @@ public class BoardService {
                         board.getBoardTitle()
                 ))
                 .toList();
+    }
+    @Transactional
+    public BoardUpdateResponse update(Long boardId, BoardSaveRequest request) {
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new NoSuchElementException("id를 찾을 수 없습니다."));
+        board.update(request.boardTitle());
+        return new BoardUpdateResponse(board.getId(),board.getBoardTitle(),board.getUpdatedAt());
     }
 }

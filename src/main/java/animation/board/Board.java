@@ -22,4 +22,7 @@ public class Board extends BaseEntity {
 
     protected Board() {
     }
+    public void update(String title){
+        this.boardTitle=title;
+    }
 }
