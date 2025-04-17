@@ -1,10 +1,9 @@
 package animation.board;
 
 import animation.loginUtils.LoginMember;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class BoardController {
@@ -14,5 +13,9 @@ public class BoardController {
         this.boardService = boardService;
     }
 
+    @PostMapping("/boards")
+    public BoardCreateResponse create(@RequestBody BoardSaveRequest boardSaveRequest, @LoginMember String adminId){
+        return boardService.create(boardSaveRequest);
+    }
 
 }
