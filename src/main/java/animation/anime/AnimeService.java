@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import animation.anime.dto.AnimeData;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -133,18 +134,42 @@ public class AnimeService {
         );
     }
 
+    // 애니메이션 전체조회
     public AnimePageResponse findAll(Pageable pageable, AnimeFilter filter) {
         List<AnimeResponse> animeResponseList = animeQueryRepository.findAll(pageable, filter);
+
         return new AnimePageResponse(animeResponseList);
     }
 
-    @Transactional
+    @Transactional // 애니메이션 소프트 딜리트
     public AnimeStatus delete(Long animeId) {
         Anime anime = animeRepository.findById(animeId).orElseThrow(() ->
                 new NoSuchElementException("애니메이션이 없습니다. id : " + animeId));
         anime.delete();
 
         return new AnimeStatus(anime.getId(), anime.isDeleted());
+    }
+
+    // 애니메이션 상세조회
+    public AnimeDetailResponse findById(Long animeId) {
+        Anime anime = animeRepository.findById(animeId).orElseThrow(() ->
+                new NoSuchElementException("애니메이션이 없습니다. id : " + animeId));
+
+        return new AnimeDetailResponse(
+                anime.getId(),
+                anime.getTitle(),
+                anime.getType(),
+                anime.getImageUrl(),
+                anime.getEpisodes(),
+                anime.getRating(),
+                anime.getAired(),
+                anime.getSynopsis(),
+                anime.getGenres(),
+                anime.getStudios(),
+                anime.getDuration(),
+                anime.isAiring(),
+                anime.getBookmark()
+                );
     }
 
 }

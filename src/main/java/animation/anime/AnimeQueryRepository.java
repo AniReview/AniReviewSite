@@ -26,7 +26,7 @@ public class AnimeQueryRepository {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch()
-                .stream().map(a -> new AnimeResponse(a.getId(), a.getImageUrl(), a.getTitle())).toList();
+                .stream().map(a -> new AnimeResponse(a.getId(), a.getImageUrl(), a.getTitle(),a.getBookmark())).toList();
     }
 
     private BooleanExpression animeFilter(AnimeFilter airing) {

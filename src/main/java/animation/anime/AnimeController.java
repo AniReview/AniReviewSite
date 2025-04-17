@@ -1,9 +1,6 @@
 package animation.anime;
 
-import animation.anime.dto.AnimeCreateResponse;
-import animation.anime.dto.AnimeData;
-import animation.anime.dto.AnimePageResponse;
-import animation.anime.dto.AnimeStatus;
+import animation.anime.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +14,7 @@ public class AnimeController {
 
     @PostMapping("/animes/{malId}")
     public AnimeCreateResponse importAnime(@PathVariable Long malId) {
-         return animeService.importAnimeById(malId);
+        return animeService.importAnimeById(malId);
     }
 
     @GetMapping("/animes")
@@ -25,8 +22,13 @@ public class AnimeController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "ALL") AnimeFilter airing) {
-        Pageable pageable = PageRequest.of(page-1, size);
+        Pageable pageable = PageRequest.of(page - 1, size);
         return animeService.findAll(pageable, airing);
+    }
+
+    @GetMapping("animes/{animeId}")
+    public AnimeDetailResponse findById(@PathVariable Long animeId) {
+        return animeService.findById(animeId);
     }
 
     @DeleteMapping("/animes/{animeId}")
