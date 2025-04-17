@@ -28,4 +28,6 @@ public class AdminRestController {
         String url = s3Service.uploadFile(files);
         return adminService.create(url,adminCreate);
     }
+
+    //TODO: 애니, 캐릭터들 중에 삭제된 데이터는 볼 수 있음 -> 되돌릴 수 있고 -> 완전 삭제할 수 있고
 }
