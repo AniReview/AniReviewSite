@@ -4,8 +4,11 @@ import animation.AniCharacter.dto.*;
 import animation.EmptyDataException;
 import animation.anime.Anime;
 import animation.anime.AnimeRepository;
+import animation.anime.dto.AnimeResponse;
 import animation.character.Character;
 import animation.character.CharacterRepository;
+import animation.character.CharacterService;
+import animation.character.dto.CharacterResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -35,11 +38,8 @@ public class AniCharacterService {
         Anime anime = animeRepository.findByMalId(animeMalId)
                 .orElseThrow(() -> new NoSuchElementException("찾으시는 애니메이션이 없습니다."));
 
-        JikanCharacterListResponse apiResponse = webClient.get()
-                .uri("/anime/{id}/characters", animeMalId)
-                .retrieve()
-                .bodyToMono(JikanCharacterListResponse.class)
-                .block();
+        // 관계 매핑 api호출
+        JikanCharacterListResponse apiResponse = api(animeMalId);
 
         if (apiResponse == null || apiResponse.data() == null || apiResponse.data().isEmpty()) {
             throw new EmptyDataException("해당 애니메이션에 대한 캐릭터 데이터가 없습니다.");
@@ -66,6 +66,14 @@ public class AniCharacterService {
 
         }
         return apiResponse;
+    }
+
+    private JikanCharacterListResponse api(Long animeMalId) {
+        return webClient.get()
+                .uri("/anime/{id}/characters", animeMalId)
+                .retrieve()
+                .bodyToMono(JikanCharacterListResponse.class)
+                .block();
     }
 
     public List<AnimeCharactersResponse> getAnimeCharacters(Long animeId) {
