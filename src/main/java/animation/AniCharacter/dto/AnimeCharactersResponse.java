@@ -1,9 +1,11 @@
 package animation.AniCharacter.dto;
 
+import animation.character.dto.CharacterResponse;
+
+import java.util.List;
+
 public record AnimeCharactersResponse(
         Long animeId,
-        Long characterId,
-        String imageUrl,
-        String name
+        List<CharacterResponse> characterResponses
 ) {
 }
