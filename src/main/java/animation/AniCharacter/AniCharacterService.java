@@ -110,6 +110,6 @@ public class AniCharacterService {
         return List.of(new CharacterAnimesResponse(
                 characterId,
                 animeResponses
-        ));  
+        ));
     }
 }
