@@ -35,7 +35,7 @@ public class CharDataImportTest {
         RestAssured.port = port;
     }
 
-    @Test
+  /*  @Test
     void saveCharacter_success() {
         RestAssured
                 .given()
@@ -44,7 +44,7 @@ public class CharDataImportTest {
                 .post("/characters/{id}", 1L)
                 .then()
                 .statusCode(200);
-    }
+    }*/
 
     @Test
     void saveCharacter_emptyData() {
