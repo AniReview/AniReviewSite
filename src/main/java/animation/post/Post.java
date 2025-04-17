@@ -2,6 +2,7 @@ package animation.post;
 
 import animation.board.Board;
 import animation.post.imageUrl.ImageUrl;
+import animation.utils.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -10,7 +11,7 @@ import java.util.List;
 
 @Getter
 @Entity
-public class Post {
+public class Post extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
