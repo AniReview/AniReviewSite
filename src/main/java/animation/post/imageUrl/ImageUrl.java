@@ -1,6 +1,6 @@
 package animation.post.imageUrl;
 
-import animation.board.Board;
+import animation.post.Post;
 import animation.utils.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -14,12 +14,12 @@ public class ImageUrl extends BaseEntity {
     private Long id;
 
     @ManyToOne
-    private Board board;
+    private Post post;
 
     private String imgUrl;
 
-    public ImageUrl(Board board, String imgUrl) {
-        this.board = board;
+    public ImageUrl(Post post,String imgUrl) {
+        this.post = post;
         this.imgUrl = imgUrl;
     }
 
