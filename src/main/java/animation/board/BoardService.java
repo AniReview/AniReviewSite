@@ -1,9 +1,6 @@
 package animation.board;
 
-import animation.board.dto.BoardCreateResponse;
-import animation.board.dto.BoardResponse;
-import animation.board.dto.BoardSaveRequest;
-import animation.board.dto.BoardUpdateResponse;
+import animation.board.dto.*;
 import jakarta.persistence.GeneratedValue;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -43,5 +40,11 @@ public class BoardService {
                 .orElseThrow(() -> new NoSuchElementException("id를 찾을 수 없습니다."));
         board.update(request.boardTitle());
         return new BoardUpdateResponse(board.getId(),board.getBoardTitle(),board.getUpdatedAt());
+    }
+
+    @Transactional
+    public BoardDeleteResponse delete(Long boardId) {
+       boardRepository.deleteById(boardId);
+        return new BoardDeleteResponse("게시판이 성공적으로 삭제되었습니다.",boardId);
     }
 }
