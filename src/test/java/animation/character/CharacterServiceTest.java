@@ -70,7 +70,7 @@ class CharacterServiceTest {
 
 
     @Test
-    @DisplayName("캐릭터 전체 조회")
+    @DisplayName("캐릭터 전체 조회 : 가나다순")
     void findAll() {
         // given
         OrderBy orderBy = OrderBy.ALPHABETICAL;
@@ -96,6 +96,40 @@ class CharacterServiceTest {
         assertThat(result.pageSize()).isEqualTo(3);
         assertThat(result.characterResponseList()).hasSize(3);
         assertThat(result.characterResponseList().get(0).charName()).isEqualTo("짱구");
+
+        verify(characterQueryRepository).findAll(orderBy, pageable);
+        verify(characterQueryRepository).countFiltered(orderBy, pageable);
+    }
+
+    @Test
+    @DisplayName("캐릭터 전체 조회 : 기본(인기순)")
+    void findAll2() {
+        // given
+        OrderBy orderBy = OrderBy.POPULAR;
+        Pageable pageable = PageRequest.of(0, 3);
+
+        List<CharacterResponse> mockList = Arrays.asList(
+                new CharacterResponse(3L, "맹구", "test3.jpg",2),
+                new CharacterResponse(2L, "훈이", "test2.jpg",1),
+                new CharacterResponse(1L, "짱구" ,"test1.jpg", 0)
+
+
+        );
+        long totalCount = 7L;
+
+        when(characterQueryRepository.findAll(orderBy, pageable)).thenReturn(mockList);
+        when(characterQueryRepository.countFiltered(orderBy, pageable)).thenReturn(totalCount);
+
+        // when
+        CharacterPageResponse result = characterService.findAll(orderBy, pageable);
+
+        // then
+        assertThat(result.totalPage()).isEqualTo(3); // (7-1)/3 + 1 = 3
+        assertThat(result.totalCount()).isEqualTo(7L);
+        assertThat(result.currentPage()).isEqualTo(0);
+        assertThat(result.pageSize()).isEqualTo(3);
+        assertThat(result.characterResponseList()).hasSize(3);
+        assertThat(result.characterResponseList().get(0).charName()).isEqualTo("맹구");
 
         verify(characterQueryRepository).findAll(orderBy, pageable);
         verify(characterQueryRepository).countFiltered(orderBy, pageable);
