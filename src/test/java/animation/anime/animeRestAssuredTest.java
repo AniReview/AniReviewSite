@@ -1,14 +1,16 @@
 package animation.anime;
 
 import animation.DatabaseCleanup;
+import animation.anime.dto.AnimeCreateResponse;
 import animation.anime.dto.AnimeDetailResponse;
-import animation.character.OrderBy;
+import animation.anime.dto.AnimePageResponse;
 import animation.loginUtils.JwtProvider;
 import com.amazonaws.services.s3.AmazonS3;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -17,9 +19,11 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
+
 
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
