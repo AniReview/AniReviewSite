@@ -1,5 +1,6 @@
 package animation.member;
 
+import animation.character.Character;
 import animation.loginUtils.SecurityUtils;
 import animation.utils.BaseEntity;
 import jakarta.persistence.*;
@@ -10,7 +11,7 @@ import java.util.NoSuchElementException;
 
 @Getter
 @Entity
-public class member extends BaseEntity {
+public class Member extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,10 +30,10 @@ public class member extends BaseEntity {
 
     private String imageUrl;
 
-    protected member() {
+    protected Member() {
     }
 
-    public member(String loginId,
+    public Member(String loginId,
                   String password,
                   String nickName,
                   Character character,

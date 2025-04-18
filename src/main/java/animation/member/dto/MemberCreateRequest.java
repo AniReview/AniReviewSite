@@ -2,7 +2,7 @@ package animation.member.dto;
 
 import java.time.LocalDate;
 
-public record memberCreateRequest(
+public record MemberCreateRequest(
         String loginId,
         String password,
         String nickName,
