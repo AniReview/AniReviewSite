@@ -19,10 +19,15 @@ public class MemberService {
 
     public MemberCreateResponse create(MemberCreateRequest memberCreateRequest) {
 
-        // 요청받은 캐릭터 id로 캐릭터 찾기 (최애캐)
-        Character character = characterRepository.findById(
-                memberCreateRequest.charId()).orElseThrow(() ->
-                new NoSuchElementException("존재하지 않는 캐릭터 id" + memberCreateRequest.charId()));
+        // 캐릭터 찾기 (charId가 null이면 character도 null)
+        Character character = null;
+
+        if (memberCreateRequest.charId() != null) {
+            character = characterRepository.findById(
+                    memberCreateRequest.charId()).orElseThrow(() ->
+                    new NoSuchElementException("존재하지 않는 캐릭터 id" + memberCreateRequest.charId()));
+        }
+
 
         // 요청받은 비밀번호 해쉬화 하기
         String hashPassword = SecurityUtils.sha256EncryptHex2(memberCreateRequest.password());
@@ -38,14 +43,16 @@ public class MemberService {
 
         memberRepository.save(member);
 
-        characterRepository.increaseFavoriteCountById(character.getId());
+        if (character != null) {
+            characterRepository.increaseFavoriteCountById(character.getId());
+        }
 
 
         // dto로 감싸서 return
         return new MemberCreateResponse(
                 member.getId(),
                 member.getLoginId(),
-                member.getCharacter().getName(),
+                member.getCharacter() != null ? member.getCharacter().getName() : null,
                 member.getBirth(),
                 member.getImageUrl());
     }
