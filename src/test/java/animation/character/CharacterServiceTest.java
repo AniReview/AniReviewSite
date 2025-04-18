@@ -2,6 +2,7 @@ package animation.character;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 import animation.admin.Admin;
@@ -17,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Arrays;
@@ -24,6 +26,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+@ActiveProfiles("test")
 class CharacterServiceTest {
 
     @Mock
@@ -57,16 +60,17 @@ class CharacterServiceTest {
         when(builder.baseUrl(anyString())).thenReturn(builder);
         when(builder.build()).thenReturn(webClient);
 
-       characterService = new CharacterService( builder,characterRepository, characterQueryRepository, adminRepository); // 생성자 직접 사용
+
+        characterService = new CharacterService( builder,characterRepository, characterQueryRepository, adminRepository); // 생성자 직접 사용
 
         admin = new Admin("testId", "password", "testNickName", "testImage");
 
-        character = new Character("캐릭터", "image.jpg", "소개");
+        character = new Character("캐릭터", "image.jpg", "소개", 1L);
     }
 
 
     @Test
-    @DisplayName("캐릭터 전체 조회")
+    @DisplayName("캐릭터 전체 조회 : 가나다순")
     void findAll() {
         // given
         OrderBy orderBy = OrderBy.ALPHABETICAL;
@@ -98,6 +102,40 @@ class CharacterServiceTest {
     }
 
     @Test
+    @DisplayName("캐릭터 전체 조회 : 기본(인기순)")
+    void findAll2() {
+        // given
+        OrderBy orderBy = OrderBy.POPULAR;
+        Pageable pageable = PageRequest.of(0, 3);
+
+        List<CharacterResponse> mockList = Arrays.asList(
+                new CharacterResponse(3L, "맹구", "test3.jpg",2),
+                new CharacterResponse(2L, "훈이", "test2.jpg",1),
+                new CharacterResponse(1L, "짱구" ,"test1.jpg", 0)
+
+
+        );
+        long totalCount = 7L;
+
+        when(characterQueryRepository.findAll(orderBy, pageable)).thenReturn(mockList);
+        when(characterQueryRepository.countFiltered(orderBy, pageable)).thenReturn(totalCount);
+
+        // when
+        CharacterPageResponse result = characterService.findAll(orderBy, pageable);
+
+        // then
+        assertThat(result.totalPage()).isEqualTo(3); // (7-1)/3 + 1 = 3
+        assertThat(result.totalCount()).isEqualTo(7L);
+        assertThat(result.currentPage()).isEqualTo(0);
+        assertThat(result.pageSize()).isEqualTo(3);
+        assertThat(result.characterResponseList()).hasSize(3);
+        assertThat(result.characterResponseList().get(0).charName()).isEqualTo("맹구");
+
+        verify(characterQueryRepository).findAll(orderBy, pageable);
+        verify(characterQueryRepository).countFiltered(orderBy, pageable);
+    }
+
+    @Test
     void 캐릭터_수정_성공() {
         // given
         String adminLoginId ="admin";
@@ -105,7 +143,7 @@ class CharacterServiceTest {
         CharacterUpdateRequest request = new CharacterUpdateRequest("수정이름", "updated.jpg", "수정소개");
 
         when(adminRepository.findByLoginId(adminLoginId)).thenReturn(Optional.of(admin));
-        when(characterRepository.findById(characterId)).thenReturn(Optional.of(character));
+        when(characterRepository.findByIdAndIsDeletedFalse(characterId)).thenReturn(Optional.of(character));
 
         // when
         CharacterUpdateResponse response = characterService.update(adminLoginId, characterId, request);
@@ -140,11 +178,23 @@ class CharacterServiceTest {
         CharacterUpdateRequest request = new CharacterUpdateRequest("수정이름", "updated.jpg", "수정소개");
 
         when(adminRepository.findByLoginId(adminLoginId)).thenReturn(Optional.of(admin));
-        when(characterRepository.findById(characterId)).thenReturn(Optional.empty());
+        when(characterRepository.findByIdAndIsDeletedFalse(characterId)).thenReturn(Optional.empty());
 
         // when & then
         assertThatThrownBy(() -> characterService.update(adminLoginId, characterId, request))
                 .isInstanceOf(NoSuchElementException.class)
                 .hasMessageContaining("캐릭터를 찾을 수 없습니다.");
+    }
+
+    @Test
+    void findById_삭제된_캐릭터_예외() {
+        // given
+        Long characterId = 1L;
+        given(characterRepository.findByIdAndIsDeletedFalse(characterId)).willReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> characterService.findById(characterId))
+                .isInstanceOf(NoSuchElementException.class)
+                .hasMessage("캐릭터를 찾을 수 없습니다.");
     }
 }

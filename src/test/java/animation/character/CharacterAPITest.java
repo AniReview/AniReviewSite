@@ -59,7 +59,8 @@ public class CharacterAPITest {
             Character c = new Character(
                     initial + "캐릭터" + String.format("%02d", i),
                     "image" + i + ".jpg",
-                    "소개" + i
+                    "소개" + i,
+                    1L
             );
             // i번 만큼 increaseFavoriteCount 호출
             for (int j = 0; j < i; j++) {
@@ -121,6 +122,22 @@ public class CharacterAPITest {
     }
 
     @Test
+    @DisplayName("캐릭터 상세 조회 : 삭제된 데이터는 보이지 않는다")
+    void 삭제된_캐릭터_상세조회x() {
+        character.delete();
+        characterRepository.save(character);
+
+        RestAssured
+                .given().log().all()
+                .pathParam("characterId", character.getId())
+                .when()
+                .get("/characters/{characterId}")
+                .then().log().all()
+                .statusCode(404);
+
+    }
+
+    @Test
     void 캐릭터_수정() {
         // given
         CharacterUpdateRequest updateRequest = new CharacterUpdateRequest(
@@ -151,6 +168,33 @@ public class CharacterAPITest {
     }
 
     @Test
+    @DisplayName("캐릭터 수정 : 삭제된 데이터는 보이지 않는다")
+    void 삭제된_캐릭터_수정x() {
+        character.delete();
+        characterRepository.save(character);
+
+        // given
+        CharacterUpdateRequest updateRequest = new CharacterUpdateRequest(
+                "수정된이름", "updated.jpg", "수정된 소개"
+        );
+
+        String adminToken = jwtProvider.createToken(admin.getLoginId());
+
+        RestAssured
+                .given().log().all()
+                .pathParam("characterId", character.getId())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminToken)
+                .contentType(ContentType.JSON)
+                .body(updateRequest)
+                .when()
+                .put("/characters/{characterId}")
+                .then().log().all()
+                .statusCode(404);
+
+    }
+
+
+    @Test
     void 캐릭터_삭제_성공() {
         String adminToken = jwtProvider.createToken(admin.getLoginId());
         // when
@@ -174,6 +218,7 @@ public class CharacterAPITest {
     }
 
     @Test
+    @DisplayName("캐릭터 삭제 : 존재하지 않는 관리자는 캐릭터 삭제 x")
     void 존재하지_않는_관리자_토큰_실패() {
         // given: 유효하지 않은 토큰
         String invalidToken = jwtProvider.createToken("invalidLoginId");
@@ -190,6 +235,7 @@ public class CharacterAPITest {
     }
 
     @Test
+    @DisplayName("캐릭터 전체 조회 : 존재하지 않는 캐릭터 삭제 실패")
     void 존재하지_않는_캐릭터_삭제_실패() {
         // given: 존재하지 않는 캐릭터 ID
         Long invalidCharacterId = 999L;
@@ -208,11 +254,10 @@ public class CharacterAPITest {
 
 
     @Test
-    @DisplayName("캐릭터 조회 : 삭제된 데이터는 보이지 않는다")
+    @DisplayName("캐릭터 전체 조회 : 삭제된 데이터는 보이지 않는다")
     void 캐릭터_조회_삭제된_데이터_제외() {
         // given: 테스트 데이터 중 하나를 soft delete 처리
         character.delete();
-        characterRepository.save(character);
 
         // when: 전체 캐릭터 조회
         CharacterPageResponse response = RestAssured
@@ -231,6 +276,7 @@ public class CharacterAPITest {
 
         assertThat(longs).doesNotContain(character.getId());
     }
+
 
 
 
