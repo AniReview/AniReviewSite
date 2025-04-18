@@ -151,8 +151,8 @@ public class AniCharacterUnitTest {
     @DisplayName("캐릭터 애니메이션 전체 조회")
     void getCharacterAnimes() throws Exception {
         List<AnimeResponse> animeResponses = List.of(
-                new AnimeResponse(1L, "http://image1.com", "title1"),
-                new AnimeResponse(2L, "http://image2.com", "title2")
+                new AnimeResponse(1L, "http://image1.com", "title1", 1),
+                new AnimeResponse(2L, "http://image2.com", "title2",2)
         );
 
         List<CharacterAnimesResponse> expectedResponse = List.of(new CharacterAnimesResponse(character.getId(), animeResponses));

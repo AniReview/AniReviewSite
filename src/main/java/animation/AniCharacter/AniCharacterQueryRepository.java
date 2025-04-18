@@ -44,7 +44,8 @@ public class AniCharacterQueryRepository {
                 .select(Projections.constructor(AnimeResponse.class,
                         anime.id,
                         anime.imageUrl,
-                        anime.title))
+                        anime.title,
+                        anime.bookmark))
                 .from(aniCharacter)
                 .join(aniCharacter.anime, anime)
                 .where(aniCharacter.character.id.eq(characterId))
