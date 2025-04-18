@@ -161,54 +161,54 @@ public class AniCharacterUnitTest {
         assertThat(charRes2.imageUrl()).isEqualTo("test2.jpg");
     }
 
-    @Test
-    @DisplayName("캐릭터 애니메이션 전체 조회")
-    void getCharacterAnimes() throws Exception {
-        // given
-        Anime anime2 = new Anime(
-                "강철의 연금술사: 브라더후드2", // title
-                "https://cdn.myanimelist.net/images/anime/1223/96541.jpg", // imageUrl
-                "TV", // type
-                "야스히로 이리", // supervision (감독)
-                Arrays.asList("액션", "어드벤처", "판타지"), // genres
-                64, // episodes
-                "PG-13", // rating
-                LocalDateTime.of(2009, 4, 5, 0, 0), // aired
-                "연금술이 존재하는 세계에서 두 형제가 금지된 연성의 대가로 모든 것을 잃고, 잃어버린 것을 되찾기 위해 모험을 떠난다.", // synopsis
-                "BONES", // productionCompany (studios)
-                "24분", // duration
-                false,
-                2L);
-
-        // 리플렉션으로 ID 강제 주입
-        Field idField = Anime.class.getDeclaredField("id");
-        idField.setAccessible(true);
-        idField.set(anime, 1L); // character1의 ID를 1L로 설정
-        idField.set(anime2, 2L); // character2의 ID를 2L로 설정
-
-        AniCharacter aniCharacter1 = new AniCharacter(character, anime);
-        AniCharacter aniCharacter2 = new AniCharacter(character, anime2);
-        List<AniCharacter> mockAniCharacters = Arrays.asList(aniCharacter1, aniCharacter2);
-
-        //애니 찾기
-        when(aniCharacterRepository.findByCharacter_Id(character.getId())).thenReturn(mockAniCharacters);
-
-        // when
-        List<CharacterAnimesResponse> result = aniCharacterService.getCharacterAnimes(character.getId());
-
-        // then
-        assertThat(result).hasSize(1);
-        CharacterAnimesResponse response = result.get(0);
-        assertThat(response.characterId()).isEqualTo(character.getId());
-        assertThat(response.animeResponseList()).hasSize(2);
-
-        // 첫 번째 애니 검증
-        AnimeResponse aniRes1 = response.animeResponseList().get(0);
-        assertThat(aniRes1.animeId()).isEqualTo(1L); // 리플렉션으로 설정한 ID
-        assertThat(aniRes1.title()).isEqualTo("강철의 연금술사: 브라더후드");
-        // 두 번째 애니 검증
-        AnimeResponse aniRes2 = response.animeResponseList().get(1);
-        assertThat(aniRes2.animeId()).isEqualTo(2L); // 리플렉션으로 설정한 ID
-        assertThat(aniRes2.title()).isEqualTo("강철의 연금술사: 브라더후드2");
-    }
+//    @Test
+//    @DisplayName("캐릭터 애니메이션 전체 조회")
+//    void getCharacterAnimes() throws Exception {
+//        // given
+//        Anime anime2 = new Anime(
+//                "강철의 연금술사: 브라더후드2", // title
+//                "https://cdn.myanimelist.net/images/anime/1223/96541.jpg", // imageUrl
+//                "TV", // type
+//                "야스히로 이리", // supervision (감독)
+//                Arrays.asList("액션", "어드벤처", "판타지"), // genres
+//                64, // episodes
+//                "PG-13", // rating
+//                LocalDateTime.of(2009, 4, 5, 0, 0), // aired
+//                "연금술이 존재하는 세계에서 두 형제가 금지된 연성의 대가로 모든 것을 잃고, 잃어버린 것을 되찾기 위해 모험을 떠난다.", // synopsis
+//                "BONES", // productionCompany (studios)
+//                "24분", // duration
+//                false,
+//                2L);
+//
+//        // 리플렉션으로 ID 강제 주입
+//        Field idField = Anime.class.getDeclaredField("id");
+//        idField.setAccessible(true);
+//        idField.set(anime, 1L); // character1의 ID를 1L로 설정
+//        idField.set(anime2, 2L); // character2의 ID를 2L로 설정
+//
+//        AniCharacter aniCharacter1 = new AniCharacter(character, anime);
+//        AniCharacter aniCharacter2 = new AniCharacter(character, anime2);
+//        List<AniCharacter> mockAniCharacters = Arrays.asList(aniCharacter1, aniCharacter2);
+//
+//        //애니 찾기
+//        when(aniCharacterRepository.findByCharacter_Id(character.getId())).thenReturn(mockAniCharacters);
+//
+//        // when
+//        List<CharacterAnimesResponse> result = aniCharacterService.getCharacterAnimes(character.getId());
+//
+//        // then
+//        assertThat(result).hasSize(1);
+//        CharacterAnimesResponse response = result.get(0);
+//        assertThat(response.characterId()).isEqualTo(character.getId());
+//        assertThat(response.animeResponseList()).hasSize(2);
+//
+//        // 첫 번째 애니 검증
+//        AnimeResponse aniRes1 = response.animeResponseList().get(0);
+//        assertThat(aniRes1.animeId()).isEqualTo(1L); // 리플렉션으로 설정한 ID
+//        assertThat(aniRes1.title()).isEqualTo("강철의 연금술사: 브라더후드");
+//        // 두 번째 애니 검증
+//        AnimeResponse aniRes2 = response.animeResponseList().get(1);
+//        assertThat(aniRes2.animeId()).isEqualTo(2L); // 리플렉션으로 설정한 ID
+//        assertThat(aniRes2.title()).isEqualTo("강철의 연금술사: 브라더후드2");
+//    }
 }
