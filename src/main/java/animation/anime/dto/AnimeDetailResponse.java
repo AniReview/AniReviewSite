@@ -3,7 +3,7 @@ package animation.anime.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public record AnimeCreateResponse(
+public record AnimeDetailResponse(
         Long id,
         String title,
         String type,
@@ -16,6 +16,6 @@ public record AnimeCreateResponse(
         String studios,
         String duration,
         boolean airing,
-        Long malId
+        Integer bookmark
 ) {
 }

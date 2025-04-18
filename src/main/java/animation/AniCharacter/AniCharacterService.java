@@ -85,4 +85,5 @@ public class AniCharacterService {
     public List<CharacterAnimesResponse> getCharacterAnimes(Long characterId) {
         return aniCharacterQueryRepository.findByCharId(characterId);
     }
+
 }
