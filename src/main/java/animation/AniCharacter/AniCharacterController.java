@@ -28,10 +28,10 @@ public class AniCharacterController {
         return aniCharacterService.getAnimeCharacters(animeId);
     }
 
-    @GetMapping("/anicharacter/character/{characterId}")
-    public List<CharacterAnimesResponse> getCharacterAnimes(@PathVariable Long characterId){
-        return aniCharacterService.getCharacterAnimes(characterId);
-    }
+//    @GetMapping("/anicharacter/character/{characterId}")
+//    public List<CharacterAnimesResponse> getCharacterAnimes(@PathVariable Long characterId){
+//        return aniCharacterService.getCharacterAnimes(characterId);
+//    }
 
 
 }
