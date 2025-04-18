@@ -25,12 +25,14 @@ public class AniCharacterService {
     private final AniCharacterRepository aniCharacterRepository;
     private final AnimeRepository animeRepository;
     private final CharacterRepository characterRepository;
+    private final AniCharacterQueryRepository aniCharacterQueryRepository;
 
-    public AniCharacterService(WebClient.Builder builder, AniCharacterRepository aniCharacterRepository, AnimeRepository animeRepository, CharacterRepository characterRepository) {
+    public AniCharacterService(WebClient.Builder builder, AniCharacterRepository aniCharacterRepository, AnimeRepository animeRepository, CharacterRepository characterRepository, AniCharacterQueryRepository aniCharacterQueryRepository) {
         this.aniCharacterRepository = aniCharacterRepository;
         this.webClient = builder.baseUrl("https://api.jikan.moe/v4").build();
         this.animeRepository = animeRepository;
         this.characterRepository = characterRepository;
+        this.aniCharacterQueryRepository = aniCharacterQueryRepository;
     }
 
     @Transactional
@@ -77,39 +79,10 @@ public class AniCharacterService {
     }
 
     public List<AnimeCharactersResponse> getAnimeCharacters(Long animeId) {
-
-        List<AniCharacter> byAnimeId = aniCharacterRepository.findByAnime_Id(animeId);
-
-        List<CharacterResponse> characterResponses = byAnimeId.stream()
-                .map(aniCharacter -> new CharacterResponse(
-                        aniCharacter.getCharacter().getId(),
-                        aniCharacter.getCharacter().getName(),
-                        aniCharacter.getCharacter().getImageUrl(),
-                        aniCharacter.getCharacter().getFavoriteCount()
-                ))
-                .toList();
-
-        return List.of(new AnimeCharactersResponse(
-                animeId,
-                characterResponses
-        ));
-
+        return aniCharacterQueryRepository.findByAnimeId(animeId);
     }
 
     public List<CharacterAnimesResponse> getCharacterAnimes(Long characterId) {
-        List<AniCharacter> byCharacterId = aniCharacterRepository.findByCharacter_Id(characterId);
-
-        List<AnimeResponse> animeResponses = byCharacterId.stream()
-                .map(characterAni -> new AnimeResponse(
-                        characterAni.getAnime().getId(),
-                        characterAni.getAnime().getImageUrl(),
-                        characterAni.getAnime().getTitle()
-                ))
-                .toList();
-
-        return List.of(new CharacterAnimesResponse(
-                characterId,
-                animeResponses
-        ));
+        return aniCharacterQueryRepository.findByCharId(characterId);
     }
 }
