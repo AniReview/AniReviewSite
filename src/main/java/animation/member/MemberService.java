@@ -5,6 +5,7 @@ import animation.character.CharacterRepository;
 import animation.loginUtils.SecurityUtils;
 import animation.member.dto.MemberCreateRequest;
 import animation.member.dto.MemberCreateResponse;
+import animation.member.dto.MemberDeleteResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final CharacterRepository characterRepository;
 
-    public MemberCreateResponse create(MemberCreateRequest memberCreateRequest) {
+    public MemberCreateResponse create(String profileImageUrl,MemberCreateRequest memberCreateRequest) {
 
         // 캐릭터 찾기 (charId가 null이면 character도 null)
         Character character = null;
@@ -39,7 +40,7 @@ public class MemberService {
                 memberCreateRequest.nickName(),
                 character,
                 memberCreateRequest.birth(),
-                memberCreateRequest.imageUrl());
+                profileImageUrl);
 
         memberRepository.save(member);
 
@@ -55,5 +56,9 @@ public class MemberService {
                 member.getCharacter() != null ? member.getCharacter().getName() : null,
                 member.getBirth(),
                 member.getImageUrl());
+    }
+
+    public MemberDeleteResponse delete() {
+        return null;
     }
 }
