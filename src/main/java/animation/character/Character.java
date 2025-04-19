@@ -45,6 +45,10 @@ public class Character extends BaseEntity {
         this.favoriteCount++;
     }
 
+    public void decreseFavoriteCount() {
+        this.favoriteCount--;
+    }
+
     public void delete() {
         this.isDeleted = true;
     }

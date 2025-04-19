@@ -5,6 +5,7 @@ import animation.character.CharacterRepository;
 import animation.loginUtils.JwtProvider;
 import animation.loginUtils.SecurityUtils;
 import animation.member.dto.*;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -70,6 +71,24 @@ public class MemberService {
         member.findByPassword(loginRequest.password());
 
         return new MemberLoginResponse(jwtProvider.createToken(loginRequest.LoginId()));
+    }
+
+    @Transactional
+    public MemberDeleteResponse deleteMember(String loginId) {
+        Member member = findByLoginId(loginId);
+
+        // 캐릭터 FavoriteCount 감소
+        if (member.getCharacter() != null) {
+            characterRepository.decreaseFavoriteCountById(member.getCharacter().getId());
+        }
+
+        if (member.isDeleted()) {
+            throw new RuntimeException("이미 삭제된 회원입니다.");
+        }
+
+        member.deleteMember();
+
+        return new MemberDeleteResponse(member.getLoginId(), member.isDeleted());
     }
 
 

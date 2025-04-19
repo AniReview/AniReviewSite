@@ -19,4 +19,9 @@ public interface CharacterRepository extends JpaRepository<Character, Long> {
     @Transactional
     @Query("UPDATE Character c SET c.favoriteCount = c.favoriteCount + 1 WHERE c.id = :id")
     int increaseFavoriteCountById(Long id);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Character c SET c.favoriteCount = c.favoriteCount - 1 WHERE c.id = :id")
+    int decreaseFavoriteCountById(Long id);
 }

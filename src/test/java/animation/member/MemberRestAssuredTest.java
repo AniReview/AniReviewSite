@@ -9,6 +9,7 @@ import animation.character.CharacterRepository;
 import animation.loginUtils.JwtProvider;
 import animation.member.dto.MemberCreateRequest;
 import animation.member.dto.MemberCreateResponse;
+import animation.member.dto.MemberDeleteResponse;
 import animation.member.dto.MemberLoginRequest;
 import com.amazonaws.services.s3.AmazonS3;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -183,5 +184,99 @@ public class MemberRestAssuredTest {
                 .post("/members/login")
                 .then()
                 .statusCode(404);
+    }
+
+    @Test
+    void 회원삭제Test() throws Exception {
+
+        File imageFile = new File("src/test/test-image.jpg");
+
+        MemberCreateRequest memberCreateRequest = new MemberCreateRequest(
+                "deleteTestId", "testpassword", "testName", null,
+                LocalDate.of(1995, 8, 15)
+        );
+
+        String memberCreateJson = objectMapper.writeValueAsString(memberCreateRequest);
+
+        given()
+                .when().log().all()
+                .contentType("multipart/form-data")
+                .multiPart("images", imageFile, "image/jpeg")
+                .multiPart("memberCreateRequest", memberCreateJson, "application/json")
+                .post("/members")
+                .then()
+                .statusCode(200);
+
+        String token = RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .body(new MemberLoginRequest("deleteTestId", "testpassword"))
+                .when()
+                .post("/members/login")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("token");
+
+        MemberDeleteResponse deleteResponse = RestAssured
+                .given()
+                .header("Authorization", "Bearer " + token)
+                .when()
+                .delete("/members")
+                .then()
+                .statusCode(200)
+                .extract()
+                .as(MemberDeleteResponse.class);
+
+        assertThat(deleteResponse.isDeleted()).isTrue();
+    }
+
+    @Test
+    void 이미삭제된회원예외Test() throws Exception{
+
+        File imageFile = new File("src/test/test-image.jpg");
+
+        MemberCreateRequest memberCreateRequest = new MemberCreateRequest(
+                "deleteTestId", "testpassword", "testName", null,
+                LocalDate.of(1995, 8, 15)
+        );
+
+        String memberCreateJson = objectMapper.writeValueAsString(memberCreateRequest);
+
+        given()
+                .when().log().all()
+                .contentType("multipart/form-data")
+                .multiPart("images", imageFile, "image/jpeg")
+                .multiPart("memberCreateRequest", memberCreateJson, "application/json")
+                .post("/members")
+                .then()
+                .statusCode(200);
+
+        String token = RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .body(new MemberLoginRequest("deleteTestId", "testpassword"))
+                .when()
+                .post("/members/login")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("token");
+
+        RestAssured
+                .given()
+                .header("Authorization", "Bearer " + token)
+                .when()
+                .delete("/members")
+                .then()
+                .statusCode(200);
+
+        RestAssured
+                .given()
+                .header("Authorization", "Bearer " + token)
+                .when()
+                .delete("/members")
+                .then()
+                .statusCode(500);
     }
 }

@@ -30,7 +30,7 @@ public class Member extends BaseEntity {
 
     private String imageUrl;
 
-    private boolean isDeleted;
+    private boolean isDeleted = false;
 
     protected Member() {
     }
@@ -53,6 +53,10 @@ public class Member extends BaseEntity {
         if (!this.getPassword().equals(SecurityUtils.sha256EncryptHex2(password))) {
             throw new NoSuchElementException("비밀번호가 다릅니다.");
         }
+    }
+
+    public void deleteMember() {
+        isDeleted = true;
     }
 
 

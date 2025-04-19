@@ -2,16 +2,14 @@ package animation.member;
 
 import animation.S3.S3Service;
 import animation.admin.dto.AdminCreate;
-import animation.member.dto.MemberCreateRequest;
-import animation.member.dto.MemberCreateResponse;
-import animation.member.dto.MemberLoginRequest;
-import animation.member.dto.MemberLoginResponse;
+import animation.loginUtils.JwtProvider;
+import animation.loginUtils.LoginMember;
+import animation.loginUtils.LoginMemberResolver;
+import animation.member.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -22,6 +20,7 @@ public class MemberRestController {
 
     private final MemberService memberService;
     private final S3Service s3Service;
+    private final LoginMemberResolver loginMemberResolver;
 
 
     @PostMapping("/members")
@@ -34,6 +33,11 @@ public class MemberRestController {
     @PostMapping("/members/login")
     public MemberLoginResponse login(@RequestBody MemberLoginRequest loginRequest) {
         return memberService.login(loginRequest);
+    }
+
+    @DeleteMapping("/members")
+    public MemberDeleteResponse deleteMember(@LoginMember String auth) {
+        return memberService.deleteMember(auth);
     }
 
 }
