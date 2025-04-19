@@ -2,17 +2,13 @@ package animation.member;
 
 import animation.DatabaseCleanup;
 import animation.S3.S3Service;
-import animation.anime.AnimeRepository;
-import animation.anime.AnimeService;
 import animation.character.Character;
 import animation.character.CharacterRepository;
-import animation.loginUtils.JwtProvider;
 import animation.member.dto.MemberCreateRequest;
-import animation.member.dto.MemberCreateResponse;
+import animation.member.dto.MemberResponse;
 import animation.member.dto.MemberDeleteResponse;
 import animation.member.dto.MemberLoginRequest;
 import com.amazonaws.services.s3.AmazonS3;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -84,7 +80,7 @@ public class MemberRestAssuredTest {
 
         String memberCreateJson = objectMapper.writeValueAsString(memberCreateRequest);
 
-        MemberCreateResponse memberCreateResponse = given()
+        MemberResponse memberResponse = given()
                 .when().log().all()
                 .contentType("multipart/form-data")
                 .multiPart("images", imageFile, "image/jpeg")
@@ -92,10 +88,10 @@ public class MemberRestAssuredTest {
                 .post("/members")
                 .then()
                 .extract()
-                .as(MemberCreateResponse.class);
+                .as(MemberResponse.class);
 
-        assertThat(memberCreateResponse.id()).isEqualTo(1L);
-        assertThat(memberCreateResponse.myChar()).isNotNull();
+        assertThat(memberResponse.id()).isEqualTo(1L);
+        assertThat(memberResponse.myChar()).isNotNull();
     }
 
     @Test
@@ -109,7 +105,7 @@ public class MemberRestAssuredTest {
 
         String memberCreateJson = objectMapper.writeValueAsString(memberCreateRequest);
 
-        MemberCreateResponse memberCreateResponse = given()
+        MemberResponse memberResponse = given()
                 .when().log().all()
                 .contentType("multipart/form-data")
                 .multiPart("images", imageFile, "image/jpeg")
@@ -117,10 +113,10 @@ public class MemberRestAssuredTest {
                 .post("/members")
                 .then()
                 .extract()
-                .as(MemberCreateResponse.class);
+                .as(MemberResponse.class);
 
-        assertThat(memberCreateResponse.id()).isEqualTo(1L);
-        assertThat(memberCreateResponse.myChar()).isNull();
+        assertThat(memberResponse.id()).isEqualTo(1L);
+        assertThat(memberResponse.myChar()).isNull();
     }
 
     @Test
@@ -134,7 +130,7 @@ public class MemberRestAssuredTest {
 
         String memberCreateJson = objectMapper.writeValueAsString(memberCreateRequest);
 
-        MemberCreateResponse memberCreateResponse = given()
+        MemberResponse memberResponse = given()
                 .when().log().all()
                 .contentType("multipart/form-data")
                 .multiPart("images", imageFile, "image/jpeg")
@@ -142,7 +138,7 @@ public class MemberRestAssuredTest {
                 .post("/members")
                 .then()
                 .extract()
-                .as(MemberCreateResponse.class);
+                .as(MemberResponse.class);
 
         RestAssured
                 .given()
@@ -166,7 +162,7 @@ public class MemberRestAssuredTest {
 
         String memberCreateJson = objectMapper.writeValueAsString(memberCreateRequest);
 
-        MemberCreateResponse memberCreateResponse = given()
+        MemberResponse memberCreateResponse = given()
                 .when().log().all()
                 .contentType("multipart/form-data")
                 .multiPart("images", imageFile, "image/jpeg")
@@ -174,7 +170,7 @@ public class MemberRestAssuredTest {
                 .post("/members")
                 .then()
                 .extract()
-                .as(MemberCreateResponse.class);
+                .as(MemberResponse.class);
 
         RestAssured
                 .given()

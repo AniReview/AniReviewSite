@@ -19,13 +19,29 @@ public class MemberService {
     private final CharacterRepository characterRepository;
     private final JwtProvider jwtProvider;
 
+    // 중복코드 함수로 빼기
+    @Transactional
+    public void increaseFavoriteCountIfExists(Character character) {
+        if (character != null) {
+            characterRepository.increaseFavoriteCountById(character.getId());
+        }
+    }
+
+    // 중복코드 함수로 빼기
+    @Transactional
+    public void decreaseFavoriteCountIfExists(Character character) {
+        if (character != null) {
+            characterRepository.decreaseFavoriteCountById(character.getId());
+        }
+    }
+
     // 로그인 로직 예외처리
     private Member findByLoginId(String loginId) {
         return memberRepository.findByLoginId(loginId).orElseThrow(
                 () -> new NoSuchElementException("회원을 찾을 수 없습니다."));
     }
 
-    public MemberCreateResponse create(String profileImageUrl,MemberCreateRequest memberCreateRequest) {
+    public MemberResponse create(String profileImageUrl, MemberCreateRequest memberCreateRequest) {
 
         // 캐릭터 찾기 (charId가 null이면 character도 null)
         Character character = null;
@@ -51,13 +67,10 @@ public class MemberService {
 
         memberRepository.save(member);
 
-        if (character != null) {
-            characterRepository.increaseFavoriteCountById(character.getId());
-        }
-
+        increaseFavoriteCountIfExists(character);
 
         // dto로 감싸서 return
-        return new MemberCreateResponse(
+        return new MemberResponse(
                 member.getId(),
                 member.getLoginId(),
                 member.getCharacter() != null ? member.getCharacter().getName() : null,
@@ -78,9 +91,7 @@ public class MemberService {
         Member member = findByLoginId(loginId);
 
         // 캐릭터 FavoriteCount 감소
-        if (member.getCharacter() != null) {
-            characterRepository.decreaseFavoriteCountById(member.getCharacter().getId());
-        }
+        decreaseFavoriteCountIfExists(member.getCharacter());
 
         if (member.isDeleted()) {
             throw new RuntimeException("이미 삭제된 회원입니다.");
@@ -89,6 +100,29 @@ public class MemberService {
         member.deleteMember();
 
         return new MemberDeleteResponse(member.getLoginId(), member.isDeleted());
+    }
+
+    @Transactional
+    public MemberResponse myCharUpdate(Long charId,String loginId) {
+
+        Member member = findByLoginId(loginId);
+
+        decreaseFavoriteCountIfExists(member.getCharacter());
+
+        Character newCharacter = characterRepository.findById(charId).orElseThrow(() ->
+                new NoSuchElementException("존재하지 않는 캐릭터 id"));
+
+        member.UpdateMyChar(newCharacter);
+
+        increaseFavoriteCountIfExists(newCharacter);
+
+        return new MemberResponse(
+                member.getId(),
+                member.getLoginId(),
+                member.getCharacter().getName(),
+                member.getBirth(),
+                member.getImageUrl());
+
     }
 
 

@@ -59,5 +59,7 @@ public class Member extends BaseEntity {
         isDeleted = true;
     }
 
-
+    public void UpdateMyChar(Character character) {
+        this.character = character;
+    }
 }
