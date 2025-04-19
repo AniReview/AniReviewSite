@@ -30,6 +30,8 @@ public class Member extends BaseEntity {
 
     private String imageUrl;
 
+    private boolean isDeleted = false;
+
     protected Member() {
     }
 
@@ -53,5 +55,11 @@ public class Member extends BaseEntity {
         }
     }
 
+    public void deleteMember() {
+        isDeleted = true;
+    }
 
+    public void UpdateMyChar(Character character) {
+        this.character = character;
+    }
 }
