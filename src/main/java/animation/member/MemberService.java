@@ -2,10 +2,9 @@ package animation.member;
 
 import animation.character.Character;
 import animation.character.CharacterRepository;
+import animation.loginUtils.JwtProvider;
 import animation.loginUtils.SecurityUtils;
-import animation.member.dto.MemberCreateRequest;
-import animation.member.dto.MemberCreateResponse;
-import animation.member.dto.MemberDeleteResponse;
+import animation.member.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +16,13 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final CharacterRepository characterRepository;
+    private final JwtProvider jwtProvider;
+
+    // 로그인 로직 예외처리
+    private Member findByLoginId(String loginId) {
+        return memberRepository.findByLoginId(loginId).orElseThrow(
+                () -> new NoSuchElementException("회원을 찾을 수 없습니다."));
+    }
 
     public MemberCreateResponse create(String profileImageUrl,MemberCreateRequest memberCreateRequest) {
 
@@ -26,7 +32,7 @@ public class MemberService {
         if (memberCreateRequest.charId() != null) {
             character = characterRepository.findById(
                     memberCreateRequest.charId()).orElseThrow(() ->
-                    new NoSuchElementException("존재하지 않는 캐릭터 id" + memberCreateRequest.charId()));
+                    new NoSuchElementException("존재하지 않는 캐릭터 LoginId" + memberCreateRequest.charId()));
         }
 
 
@@ -58,7 +64,13 @@ public class MemberService {
                 member.getImageUrl());
     }
 
-    public MemberDeleteResponse delete() {
-        return null;
+    public MemberLoginResponse login(MemberLoginRequest loginRequest) {
+        Member member = findByLoginId(loginRequest.LoginId());
+
+        member.findByPassword(loginRequest.password());
+
+        return new MemberLoginResponse(jwtProvider.createToken(loginRequest.LoginId()));
     }
+
+
 }

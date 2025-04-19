@@ -30,6 +30,8 @@ public class Member extends BaseEntity {
 
     private String imageUrl;
 
+    private boolean isDeleted;
+
     protected Member() {
     }
 

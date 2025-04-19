@@ -9,6 +9,7 @@ import animation.character.CharacterRepository;
 import animation.loginUtils.JwtProvider;
 import animation.member.dto.MemberCreateRequest;
 import animation.member.dto.MemberCreateResponse;
+import animation.member.dto.MemberLoginRequest;
 import com.amazonaws.services.s3.AmazonS3;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -119,5 +120,68 @@ public class MemberRestAssuredTest {
 
         assertThat(memberCreateResponse.id()).isEqualTo(1L);
         assertThat(memberCreateResponse.myChar()).isNull();
+    }
+
+    @Test
+    void 로그인Test() throws Exception {
+        File imageFile = new File("src/test/test-image.jpg");
+
+        MemberCreateRequest memberCreateRequest = new MemberCreateRequest(
+                "testId","testpassword","testName",null,
+                LocalDate.of(1995, 8, 15)
+        );
+
+        String memberCreateJson = objectMapper.writeValueAsString(memberCreateRequest);
+
+        MemberCreateResponse memberCreateResponse = given()
+                .when().log().all()
+                .contentType("multipart/form-data")
+                .multiPart("images", imageFile, "image/jpeg")
+                .multiPart("memberCreateRequest", memberCreateJson, "application/json")
+                .post("/members")
+                .then()
+                .extract()
+                .as(MemberCreateResponse.class);
+
+        RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .body(new MemberLoginRequest("testId","testpassword"))
+                .when()
+                .post("/members/login")
+                .then()
+                .statusCode(200);
+
+    }
+
+    @Test
+    void 로그인비밀번호불일치Test() throws Exception{
+        File imageFile = new File("src/test/test-image.jpg");
+
+        MemberCreateRequest memberCreateRequest = new MemberCreateRequest(
+                "testId","testpassword","testName",null,
+                LocalDate.of(1995, 8, 15)
+        );
+
+        String memberCreateJson = objectMapper.writeValueAsString(memberCreateRequest);
+
+        MemberCreateResponse memberCreateResponse = given()
+                .when().log().all()
+                .contentType("multipart/form-data")
+                .multiPart("images", imageFile, "image/jpeg")
+                .multiPart("memberCreateRequest", memberCreateJson, "application/json")
+                .post("/members")
+                .then()
+                .extract()
+                .as(MemberCreateResponse.class);
+
+        RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .body(new MemberLoginRequest("testId","failedPassword"))
+                .when()
+                .post("/members/login")
+                .then()
+                .statusCode(404);
     }
 }
