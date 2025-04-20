@@ -7,8 +7,10 @@ import animation.loginUtils.SecurityUtils;
 import animation.member.dto.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
@@ -18,6 +20,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final CharacterRepository characterRepository;
     private final JwtProvider jwtProvider;
+    private final MemberQueryRepository memberQueryRepository;
 
     // 중복코드 함수로 빼기
     @Transactional
@@ -123,6 +126,13 @@ public class MemberService {
                 member.getBirth(),
                 member.getImageUrl());
 
+    }
+
+    @Transactional
+    public MemberListResponse findAll(Pageable pageable, String keyWard) {
+        List<MemberSimpleDto> list = memberQueryRepository.findAll(pageable, keyWard);
+
+        return new MemberListResponse(list);
     }
 
 

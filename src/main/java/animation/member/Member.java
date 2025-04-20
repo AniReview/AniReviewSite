@@ -62,4 +62,6 @@ public class Member extends BaseEntity {
     public void UpdateMyChar(Character character) {
         this.character = character;
     }
+
+
 }

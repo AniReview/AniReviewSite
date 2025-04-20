@@ -5,6 +5,8 @@ import animation.loginUtils.LoginMember;
 import animation.loginUtils.LoginMemberResolver;
 import animation.member.dto.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,6 +41,14 @@ public class MemberRestController {
     @PatchMapping("/members/{charId}")
     public MemberResponse updateMyChar(@PathVariable Long charId, @LoginMember String auth) {
         return memberService.myCharUpdate(charId,auth);
+    }
+
+    @GetMapping("/members")
+    public MemberListResponse findAll( @RequestParam(defaultValue = "1") int page,
+                                       @RequestParam(defaultValue = "10") int size,
+                                       @RequestParam(required = false) String keyWard) {
+        Pageable pageable = PageRequest.of(page-1, size);
+        return memberService.findAll(pageable, keyWard);
     }
 
 }
