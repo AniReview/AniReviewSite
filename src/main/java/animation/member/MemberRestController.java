@@ -55,4 +55,9 @@ public class MemberRestController {
         return memberService.findByMemberId(memberId);
     }
 
+    @PutMapping("/members")
+    public MemberResponse updateProfile(@LoginMember String auth, @RequestBody MemberProfileUpdateRequest request) {
+        return memberService.profileUpdate(auth, request);
+    }
+
 }

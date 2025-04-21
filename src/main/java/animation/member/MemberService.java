@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -36,6 +35,13 @@ public class MemberService {
     public void decreaseFavoriteCountIfExists(Character character) {
         if (character != null) {
             characterRepository.decreaseFavoriteCountById(character.getId());
+        }
+    }
+
+    // 중복코드 함수로 빼기
+    private void validateNotDeleted(Member member) {
+        if (member.isDeleted()) {
+            throw new RuntimeException("삭제된 회원입니다.");
         }
     }
 
@@ -99,9 +105,7 @@ public class MemberService {
         // 캐릭터 FavoriteCount 감소
         decreaseFavoriteCountIfExists(member.getCharacter());
 
-        if (member.isDeleted()) {
-            throw new RuntimeException("이미 삭제된 회원입니다.");
-        }
+        validateNotDeleted(member);
 
         member.deleteMember();
 
@@ -142,6 +146,10 @@ public class MemberService {
         Member member = memberRepository.findById(memberId).orElseThrow(() ->
                 new NoSuchElementException("존재하지 않는 memberId : " + memberId));
 
+        if (member.isDeleted()) {
+            throw new RuntimeException("이미 삭제된 회원입니다.");
+        }
+
         String myChar = "";
         if (member.getCharacter() != null) {
             myChar = member.getCharacter().getName();
@@ -156,6 +164,23 @@ public class MemberService {
                 member.getFriendCount(),
                 member.getIntroduce()
                 );
+    }
+
+    @Transactional
+    public MemberResponse profileUpdate(String loginId,MemberProfileUpdateRequest request) {
+        Member member = findByLoginId(loginId);
+
+        validateNotDeleted(member);
+
+        member.updateProfile(request.nickName(), request.birth(), request.introduce());
+
+        return new MemberResponse(
+                member.getId(),
+                member.getLoginId(),
+                member.getCharacter() != null ? member.getCharacter().getName() : null,
+                member.getBirth(),
+                member.getImageUrl());
+
     }
 
 
