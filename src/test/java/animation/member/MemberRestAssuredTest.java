@@ -4,11 +4,9 @@ import animation.DatabaseCleanup;
 import animation.S3.S3Service;
 import animation.character.Character;
 import animation.character.CharacterRepository;
-import animation.member.dto.MemberCreateRequest;
-import animation.member.dto.MemberResponse;
-import animation.member.dto.MemberDeleteResponse;
-import animation.member.dto.MemberLoginRequest;
+import animation.member.dto.*;
 import com.amazonaws.services.s3.AmazonS3;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -75,7 +73,7 @@ public class MemberRestAssuredTest {
 
         MemberCreateRequest memberCreateRequest = new MemberCreateRequest(
                 "testId","testpassword","testName",character.getId(),
-                LocalDate.of(1995, 8, 15)
+                LocalDate.of(1995, 8, 15),"ㅎㅇㅎㅇ"
         );
 
         String memberCreateJson = objectMapper.writeValueAsString(memberCreateRequest);
@@ -100,7 +98,7 @@ public class MemberRestAssuredTest {
 
         MemberCreateRequest memberCreateRequest = new MemberCreateRequest(
                 "testId","testpassword","testName",null,
-                LocalDate.of(1995, 8, 15)
+                LocalDate.of(1995, 8, 15),"ㅎㅇㅎㅇ"
         );
 
         String memberCreateJson = objectMapper.writeValueAsString(memberCreateRequest);
@@ -125,7 +123,7 @@ public class MemberRestAssuredTest {
 
         MemberCreateRequest memberCreateRequest = new MemberCreateRequest(
                 "testId","testpassword","testName",null,
-                LocalDate.of(1995, 8, 15)
+                LocalDate.of(1995, 8, 15),"ㅎㅇㅎㅇ"
         );
 
         String memberCreateJson = objectMapper.writeValueAsString(memberCreateRequest);
@@ -157,7 +155,7 @@ public class MemberRestAssuredTest {
 
         MemberCreateRequest memberCreateRequest = new MemberCreateRequest(
                 "testId","testpassword","testName",null,
-                LocalDate.of(1995, 8, 15)
+                LocalDate.of(1995, 8, 15),"ㅎㅇㅎㅇ"
         );
 
         String memberCreateJson = objectMapper.writeValueAsString(memberCreateRequest);
@@ -189,7 +187,7 @@ public class MemberRestAssuredTest {
 
         MemberCreateRequest memberCreateRequest = new MemberCreateRequest(
                 "deleteTestId", "testpassword", "testName", null,
-                LocalDate.of(1995, 8, 15)
+                LocalDate.of(1995, 8, 15),"ㅎㅇㅎㅇ"
         );
 
         String memberCreateJson = objectMapper.writeValueAsString(memberCreateRequest);
@@ -234,7 +232,7 @@ public class MemberRestAssuredTest {
 
         MemberCreateRequest memberCreateRequest = new MemberCreateRequest(
                 "deleteTestId", "testpassword", "testName", null,
-                LocalDate.of(1995, 8, 15)
+                LocalDate.of(1995, 8, 15),"ㅎㅇㅎㅇ"
         );
 
         String memberCreateJson = objectMapper.writeValueAsString(memberCreateRequest);
@@ -274,5 +272,40 @@ public class MemberRestAssuredTest {
                 .delete("/members")
                 .then()
                 .statusCode(500);
+    }
+
+    @Test
+    void 멤버상세조회Test() throws Exception {
+
+        File imageFile = new File("src/test/test-image.jpg");
+
+        MemberCreateRequest memberCreateRequest = new MemberCreateRequest(
+                "testId","testpassword","testName",null,
+                LocalDate.of(1995, 8, 15),"ㅎㅇㅎㅇ"
+        );
+
+        String memberCreateJson = objectMapper.writeValueAsString(memberCreateRequest);
+
+        MemberResponse memberResponse = given()
+                .when().log().all()
+                .contentType("multipart/form-data")
+                .multiPart("images", imageFile, "image/jpeg")
+                .multiPart("memberCreateRequest", memberCreateJson, "application/json")
+                .post("/members")
+                .then()
+                .extract()
+                .as(MemberResponse.class);
+
+        MemberDetailResponse memberDetailResponse =
+                given()
+                .pathParam("memberId", memberResponse.id())
+                .when().log().all()
+                .get("/members/{memberId}")
+                .then()
+                .extract()
+                .as(MemberDetailResponse.class);
+
+        assertThat(memberDetailResponse.id()).isEqualTo(1L);
+
     }
 }

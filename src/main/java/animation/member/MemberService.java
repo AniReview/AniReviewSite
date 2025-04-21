@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -66,7 +67,9 @@ public class MemberService {
                 memberCreateRequest.nickName(),
                 character,
                 memberCreateRequest.birth(),
-                profileImageUrl);
+                profileImageUrl,
+                memberCreateRequest.introduce()
+                );
 
         memberRepository.save(member);
 
@@ -129,10 +132,30 @@ public class MemberService {
     }
 
     @Transactional
-    public MemberListResponse findAll(Pageable pageable, String keyWard) {
-        List<MemberSimpleDto> list = memberQueryRepository.findAll(pageable, keyWard);
+    public MemberListResponse findAll(Pageable pageable, String keyWord) {
+        List<MemberSimpleDto> list = memberQueryRepository.findAll(pageable, keyWord);
 
         return new MemberListResponse(list);
+    }
+
+    public MemberDetailResponse findByMemberId(Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() ->
+                new NoSuchElementException("존재하지 않는 memberId : " + memberId));
+
+        String myChar = "";
+        if (member.getCharacter() != null) {
+            myChar = member.getCharacter().getName();
+        }
+
+        return new MemberDetailResponse(
+                member.getId(),
+                member.getNickName(),
+                myChar,
+                member.getBirth(),
+                member.getImageUrl(),
+                member.getFriendCount(),
+                member.getIntroduce()
+                );
     }
 
 

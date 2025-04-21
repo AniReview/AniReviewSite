@@ -30,7 +30,11 @@ public class Member extends BaseEntity {
 
     private String imageUrl;
 
+    private int friendCount = 0;
+
     private boolean isDeleted = false;
+
+    private String introduce;
 
     protected Member() {
     }
@@ -40,13 +44,15 @@ public class Member extends BaseEntity {
                   String nickName,
                   Character character,
                   LocalDate birth,
-                  String imageUrl) {
+                  String imageUrl,
+                  String introduce) {
         this.loginId = loginId;
         this.password = password;
         this.nickName = nickName;
         this.character = character;
         this.birth = birth;
         this.imageUrl = imageUrl;
+        this.introduce = introduce;
     }
 
     public void findByPassword(String password) {
