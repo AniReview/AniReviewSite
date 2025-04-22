@@ -2,10 +2,7 @@ package animation.bookmark;
 
 import animation.anime.Anime;
 import animation.anime.AnimeRepository;
-import animation.bookmark.dto.BookMarkDeleteResponse;
-import animation.bookmark.dto.BookMarkResponse;
-import animation.bookmark.dto.BookmarkReadResponse;
-import animation.bookmark.dto.BookmarkRequest;
+import animation.bookmark.dto.*;
 import animation.character.Character;
 import animation.member.Member;
 import animation.member.MemberRepository;
@@ -16,6 +13,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -27,7 +26,10 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -37,6 +39,9 @@ public class bookmarkUnitTest {
 
     @Mock
     private BookMarkRepository bookMarkRepository;
+
+    @Mock
+    private BookMarkQueryRepository bookMarkQueryRepository;
 
     @Mock
     private MemberRepository memberRepository;
@@ -115,17 +120,36 @@ public class bookmarkUnitTest {
     @Test
     @DisplayName("북마크 조회 성공")
     void 북마크_조회() {
-        BookmarkRequest request = new BookmarkRequest(testAnime.getId());
+        // given
+        Long memberId = testMember.getId();
+        Pageable pageable = PageRequest.of(0, 10);
 
-        when(memberRepository.findById(testMember.getId())).thenReturn(Optional.of(testMember));
-        when(bookMarkRepository.findByMemberId(testMember.getId())).thenReturn(List.of(testBookMark));
+        List<BookmarkData> bookmarkDataList = List.of(
+                new BookmarkData(testAnime.getId(), testAnime.getTitle(), testAnime.getImageUrl())
+        );
+        BookmarkReadResponse bookmarkResponse = new BookmarkReadResponse(memberId, bookmarkDataList);
+        BookMarkPageResponse mockPageResponse = new BookMarkPageResponse(
+                1,
+                1L,
+                1,
+                10,
+                bookmarkResponse
+        );
 
-        BookmarkReadResponse readAll = bookMarkService.readAll(testMember.getId());
+        when(memberRepository.findById(memberId)).thenReturn(Optional.of(testMember));
+        when(bookMarkQueryRepository.getBookmarksByMemberId(eq(memberId), any(Pageable.class)))
+                .thenReturn(mockPageResponse);
 
-        assertThat(readAll.memberId()).isEqualTo(testMember.getId());
-        assertThat(readAll.bookmarks()).hasSize(1);
-        assertThat(readAll.bookmarks().get(0).aniId()).isEqualTo(testAnime.getId());
+        // when
+        BookMarkPageResponse readAll = bookMarkService.readAll(memberId, pageable);
+
+        // then
+        assertNotNull(readAll, "북마크 조회 결과가 null입니다"); // 디버깅용 추가 검증
+        assertThat(readAll.bookmarkReadResponse().memberId()).isEqualTo(memberId);
+        assertThat(readAll.bookmarkReadResponse().bookmarks()).hasSize(1);
+        assertThat(readAll.bookmarkReadResponse().bookmarks().get(0).aniId()).isEqualTo(testAnime.getId());
     }
+
 
     @Test
     @DisplayName("북마크 삭제 성공")
