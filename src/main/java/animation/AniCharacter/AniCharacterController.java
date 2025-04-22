@@ -1,13 +1,10 @@
 package animation.AniCharacter;
 
-import animation.AniCharacter.dto.AnimeCharactersResponse;
-import animation.AniCharacter.dto.CharacterAnimesResponse;
-import animation.AniCharacter.dto.JikanCharacterListResponse;
+import animation.AniCharacter.dto.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,14 +21,20 @@ public class AniCharacterController {
     }
 
     @GetMapping("/anicharacter/anime/{animeId}")
-    public List<AnimeCharactersResponse> getAnimeCharacters(@PathVariable Long animeId){
-        return aniCharacterService.getAnimeCharacters(animeId);
+    public AniCharPageResponse getAnimeCharacters(@PathVariable Long animeId,
+                                                  @RequestParam(defaultValue = "1") int page,
+                                                  @RequestParam(defaultValue = "10") int size){
+        Pageable pageable = PageRequest.of(page-1, size);
+        return aniCharacterService.getAnimeCharacters(animeId,pageable);
     }
 
-//    @GetMapping("/anicharacter/character/{characterId}")
-//    public List<CharacterAnimesResponse> getCharacterAnimes(@PathVariable Long characterId){
-//        return aniCharacterService.getCharacterAnimes(characterId);
-//    }
+    @GetMapping("/anicharacter/character/{characterId}")
+    public CharAniPageResponse getCharacterAnimes(@PathVariable Long characterId,
+                                                  @RequestParam(defaultValue = "1") int page,
+                                                  @RequestParam(defaultValue = "10") int size){
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return aniCharacterService.getCharacterAnimes(characterId, pageable);
+    }
 
 
 }

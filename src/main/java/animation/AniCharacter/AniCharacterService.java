@@ -9,6 +9,7 @@ import animation.character.Character;
 import animation.character.CharacterRepository;
 import animation.character.CharacterService;
 import animation.character.dto.CharacterResponse;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -78,12 +79,12 @@ public class AniCharacterService {
                 .block();
     }
 
-    public List<AnimeCharactersResponse> getAnimeCharacters(Long animeId) {
-        return aniCharacterQueryRepository.findByAnimeId(animeId);
+    public AniCharPageResponse getAnimeCharacters(Long animeId, Pageable pageable) {
+        return aniCharacterQueryRepository.findByAnimeId(animeId, pageable);
     }
 
-    public List<CharacterAnimesResponse> getCharacterAnimes(Long characterId) {
-        return aniCharacterQueryRepository.findByCharId(characterId);
+    public CharAniPageResponse getCharacterAnimes(Long characterId, Pageable pageable) {
+        return aniCharacterQueryRepository.findByCharId(characterId, pageable);
     }
 
 }

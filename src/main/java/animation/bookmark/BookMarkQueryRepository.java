@@ -48,10 +48,7 @@ public class BookMarkQueryRepository {
                 .orderBy(anime.id.desc())
                 .fetch();
 
-        //전체 페이징
         Long totalCount = countFiltered(memberId);
-
-        // 페이징 정보 계산
         int totalPage = (int) Math.ceil((double) totalCount / pageable.getPageSize());
         int currentPage = pageable.getPageNumber() + 1;
 
