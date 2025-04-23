@@ -34,8 +34,6 @@ public class Member extends BaseEntity {
 
     private boolean isDeleted = false;
 
-    private String introduce;
-
     protected Member() {
     }
 
@@ -52,7 +50,6 @@ public class Member extends BaseEntity {
         this.character = character;
         this.birth = birth;
         this.imageUrl = imageUrl;
-        this.introduce = introduce;
     }
 
     public void findByPassword(String password) {
@@ -69,15 +66,12 @@ public class Member extends BaseEntity {
         this.character = character;
     }
 
-    public void updateProfile(String nickName, LocalDate birth, String introduce) {
+    public void updateProfile(String nickName, LocalDate birth) {
         if (nickName != null) {
             this.nickName = nickName;
         }
         if (birth != null) {
             this.birth = birth;
-        }
-        if (introduce != null) {
-            this.introduce = introduce;
         }
     }
 

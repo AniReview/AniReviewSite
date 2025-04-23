@@ -161,8 +161,7 @@ public class MemberService {
                 myChar,
                 member.getBirth(),
                 member.getImageUrl(),
-                member.getFriendCount(),
-                member.getIntroduce()
+                member.getFriendCount()
                 );
     }
 
@@ -172,7 +171,7 @@ public class MemberService {
 
         validateNotDeleted(member);
 
-        member.updateProfile(request.nickName(), request.birth(), request.introduce());
+        member.updateProfile(request.nickName(), request.birth());
 
         return new MemberResponse(
                 member.getId(),

@@ -7,6 +7,5 @@ public record MemberDetailResponse(Long id,
                                    String myChar,
                                    LocalDate birth,
                                    String myUrl,
-                                   Integer friendCount,
-                                   String IntroduceCount) {
+                                   Integer friendCount) {
 }
