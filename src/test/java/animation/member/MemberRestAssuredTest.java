@@ -54,7 +54,8 @@ public class MemberRestAssuredTest {
     void setUp() throws IOException {
         databaseCleanup.execute();
         when(s3Service.uploadFile(any(MultipartFile.class)))
-                .thenReturn("https://test-bucket.s3.amazonaws.com/test-image.jpg");
+                .thenReturn("https://test-bucket.s3.amazonaws.com/test-image.jpg")
+                .thenReturn("https://test-bucket.s3.amazonaws.com/test-image2.jpg");
         RestAssured.port = port;
     }
 
@@ -362,5 +363,58 @@ public class MemberRestAssuredTest {
         assertThat(response.birth()).isEqualTo(LocalDate.of(1995, 8, 15));
 
     }
+
+    @Test
+    void 멤버이미지수정Test() throws Exception {
+        File imageFile = new File("src/test/test-image.jpg");
+
+        MemberCreateRequest memberCreateRequest = new MemberCreateRequest(
+                "testId","testpassword","testName",null,
+                LocalDate.of(1995, 8, 15),"ㅎㅇㅎㅇ"
+        );
+
+        String memberCreateJson = objectMapper.writeValueAsString(memberCreateRequest);
+
+        MemberResponse memberResponse = given()
+                .when().log().all()
+                .contentType("multipart/form-data")
+                .multiPart("images", imageFile, "image/jpeg")
+                .multiPart("memberCreateRequest", memberCreateJson, "application/json")
+                .post("/members")
+                .then()
+                .extract()
+                .as(MemberResponse.class);
+
+        String token = RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .body(new MemberLoginRequest("testId", "testpassword"))
+                .when()
+                .post("/members/login")
+                .then()
+                .statusCode(200)
+                .extract()
+                .jsonPath()
+                .getString("token");
+
+        File newImageFile = new File("src/test/test-image2.jpg");
+
+        MemberResponse imageUpdate = given().log().all()
+                .header("Authorization", "Bearer " + token)
+                .contentType("multipart/form-data")
+                .multiPart("images", newImageFile, "image/jpeg")
+                .when()
+                .patch("/members/image")
+                .then()
+                .statusCode(200)
+                .extract()
+                .as(MemberResponse.class);
+
+        assertThat(imageUpdate.imageUrl()).isNotEqualTo(memberResponse.imageUrl());
+    }
+
+
+
+
 
 }

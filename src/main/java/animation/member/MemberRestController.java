@@ -60,4 +60,10 @@ public class MemberRestController {
         return memberService.profileUpdate(auth, request);
     }
 
+    @PatchMapping("members/image")
+    public MemberResponse imageUpdate(@LoginMember String auth,@RequestPart(value = "images") MultipartFile files) throws IOException {
+        String url = s3Service.uploadFile(files);
+        return memberService.imageUpdate(auth, url);
+    }
+
 }
