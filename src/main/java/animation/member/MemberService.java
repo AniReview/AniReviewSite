@@ -73,8 +73,7 @@ public class MemberService {
                 memberCreateRequest.nickName(),
                 character,
                 memberCreateRequest.birth(),
-                profileImageUrl,
-                memberCreateRequest.introduce()
+                profileImageUrl
                 );
 
         memberRepository.save(member);

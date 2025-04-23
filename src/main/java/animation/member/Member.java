@@ -42,8 +42,7 @@ public class Member extends BaseEntity {
                   String nickName,
                   Character character,
                   LocalDate birth,
-                  String imageUrl,
-                  String introduce) {
+                  String imageUrl) {
         this.loginId = loginId;
         this.password = password;
         this.nickName = nickName;
