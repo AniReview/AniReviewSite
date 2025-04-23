@@ -12,7 +12,7 @@ import java.util.NoSuchElementException;
 @Getter
 @Entity
 public class Member extends BaseEntity {
-
+// 멤버 프로필 업데이트를 어떻게 처리할건지??
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,6 +29,8 @@ public class Member extends BaseEntity {
     private LocalDate birth;
 
     private String imageUrl;
+
+    private int friendCount = 0;
 
     private boolean isDeleted = false;
 
@@ -62,6 +64,17 @@ public class Member extends BaseEntity {
     public void UpdateMyChar(Character character) {
         this.character = character;
     }
+
+    public void updateProfile(String nickName, LocalDate birth) {
+        if (nickName != null) {
+            this.nickName = nickName;
+        }
+        if (birth != null) {
+            this.birth = birth;
+        }
+    }
+
+
 
 
 }

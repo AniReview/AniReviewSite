@@ -1,6 +1,5 @@
 package animation.member;
 
-import animation.character.OrderBy;
 import animation.character.QCharacter;
 import animation.member.dto.MemberSimpleDto;
 import com.querydsl.core.types.Projections;
@@ -22,7 +21,7 @@ public class MemberQueryRepository {
         this.jpaQueryFactory = jpaQueryFactory;
     }
 
-    public List<MemberSimpleDto> findAll(Pageable pageable, String keyWard) {
+    public List<MemberSimpleDto> findAll(Pageable pageable, String keyWord) {
 
         // map을 쓰지 않고 필요한 필드만 조회하여 가져오는 방식 , 캐릭터에 대해 n + 1 발생하지 않았음 포스트맨 테스트
         return jpaQueryFactory
@@ -35,7 +34,7 @@ public class MemberQueryRepository {
                 // character가 null일 경우 조회되지 않는 현상을 방지하기 위해 left join사용
                 .leftJoin(member.character, character)
                 .where(member.isDeleted.eq(false),
-                        findByKeyWard(keyWard))
+                        findByKeyWard(keyWord))
                 .orderBy(member.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

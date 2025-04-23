@@ -38,6 +38,13 @@ public class MemberService {
         }
     }
 
+    // 중복코드 함수로 빼기
+    private void validateNotDeleted(Member member) {
+        if (member.isDeleted()) {
+            throw new RuntimeException("삭제된 회원입니다.");
+        }
+    }
+
     // 로그인 로직 예외처리
     private Member findByLoginId(String loginId) {
         return memberRepository.findByLoginId(loginId).orElseThrow(
@@ -66,7 +73,8 @@ public class MemberService {
                 memberCreateRequest.nickName(),
                 character,
                 memberCreateRequest.birth(),
-                profileImageUrl);
+                profileImageUrl
+                );
 
         memberRepository.save(member);
 
@@ -96,9 +104,7 @@ public class MemberService {
         // 캐릭터 FavoriteCount 감소
         decreaseFavoriteCountIfExists(member.getCharacter());
 
-        if (member.isDeleted()) {
-            throw new RuntimeException("이미 삭제된 회원입니다.");
-        }
+        validateNotDeleted(member);
 
         member.deleteMember();
 
@@ -129,10 +135,50 @@ public class MemberService {
     }
 
     @Transactional
-    public MemberListResponse findAll(Pageable pageable, String keyWard) {
-        List<MemberSimpleDto> list = memberQueryRepository.findAll(pageable, keyWard);
+    public MemberListResponse findAll(Pageable pageable, String keyWord) {
+        List<MemberSimpleDto> list = memberQueryRepository.findAll(pageable, keyWord);
 
         return new MemberListResponse(list);
+    }
+
+    public MemberDetailResponse findByMemberId(Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() ->
+                new NoSuchElementException("존재하지 않는 memberId : " + memberId));
+
+        if (member.isDeleted()) {
+            throw new RuntimeException("이미 삭제된 회원입니다.");
+        }
+
+        String myChar = "";
+        if (member.getCharacter() != null) {
+            myChar = member.getCharacter().getName();
+        }
+
+        return new MemberDetailResponse(
+                member.getId(),
+                member.getNickName(),
+                myChar,
+                member.getBirth(),
+                member.getImageUrl(),
+                member.getFriendCount()
+                );
+    }
+
+    @Transactional
+    public MemberResponse profileUpdate(String loginId,MemberProfileUpdateRequest request) {
+        Member member = findByLoginId(loginId);
+
+        validateNotDeleted(member);
+
+        member.updateProfile(request.nickName(), request.birth());
+
+        return new MemberResponse(
+                member.getId(),
+                member.getLoginId(),
+                member.getCharacter() != null ? member.getCharacter().getName() : null,
+                member.getBirth(),
+                member.getImageUrl());
+
     }
 
 

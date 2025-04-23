@@ -18,7 +18,6 @@ public class MemberRestController {
 
     private final MemberService memberService;
     private final S3Service s3Service;
-    private final LoginMemberResolver loginMemberResolver;
 
 
     @PostMapping("/members")
@@ -43,12 +42,22 @@ public class MemberRestController {
         return memberService.myCharUpdate(charId,auth);
     }
 
-    @GetMapping("/members")
+    @GetMapping("/members/all")
     public MemberListResponse findAll( @RequestParam(defaultValue = "1") int page,
                                        @RequestParam(defaultValue = "10") int size,
                                        @RequestParam(required = false) String keyWard) {
         Pageable pageable = PageRequest.of(page-1, size);
         return memberService.findAll(pageable, keyWard);
+    }
+
+    @GetMapping("/members/{memberId}")
+    public MemberDetailResponse findByMemberId(@PathVariable Long memberId) {
+        return memberService.findByMemberId(memberId);
+    }
+
+    @PutMapping("/members")
+    public MemberResponse updateProfile(@LoginMember String auth, @RequestBody MemberProfileUpdateRequest request) {
+        return memberService.profileUpdate(auth, request);
     }
 
 }
