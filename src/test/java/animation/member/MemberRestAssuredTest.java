@@ -138,14 +138,17 @@ public class MemberRestAssuredTest {
                 .extract()
                 .as(MemberResponse.class);
 
-        RestAssured
+        String token = RestAssured
                 .given()
                 .contentType(ContentType.JSON)
-                .body(new MemberLoginRequest("testId","testpassword"))
+                .body(new MemberLoginRequest("testId", "testpassword"))
                 .when()
                 .post("/members/login")
                 .then()
-                .statusCode(200);
+                .statusCode(200)
+                .extract()
+                .jsonPath()
+                .getString("token");
 
     }
 
@@ -308,4 +311,56 @@ public class MemberRestAssuredTest {
         assertThat(memberDetailResponse.id()).isEqualTo(1L);
 
     }
+
+    @Test
+    void 멤버수정Test() throws Exception {
+        File imageFile = new File("src/test/test-image.jpg");
+
+        MemberCreateRequest memberCreateRequest = new MemberCreateRequest(
+                "testId","testpassword","testName",null,
+                LocalDate.of(1995, 8, 15),"ㅎㅇㅎㅇ"
+        );
+
+        String memberCreateJson = objectMapper.writeValueAsString(memberCreateRequest);
+
+        MemberResponse memberResponse = given()
+                .when().log().all()
+                .contentType("multipart/form-data")
+                .multiPart("images", imageFile, "image/jpeg")
+                .multiPart("memberCreateRequest", memberCreateJson, "application/json")
+                .post("/members")
+                .then()
+                .extract()
+                .as(MemberResponse.class);
+
+        String token = RestAssured
+                .given()
+                .contentType(ContentType.JSON)
+                .body(new MemberLoginRequest("testId", "testpassword"))
+                .when()
+                .post("/members/login")
+                .then()
+                .statusCode(200)
+                .extract()
+                .jsonPath()
+                .getString("token");
+
+        MemberResponse response = given()
+                .log().all()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .body(new MemberProfileUpdateRequest("수정한닉네임",null,"안녕"))
+                .when()
+                .put("/members")
+                .then()
+                .statusCode(200)
+                .extract()
+                .as(MemberResponse.class);
+
+        assertThat(response.introduce()).isEqualTo("안녕");
+        assertThat(response.nickName()).isEqualTo("수정한닉네임");
+        assertThat(response.birth()).isEqualTo(LocalDate.of(1995, 8, 15));
+
+    }
+
 }

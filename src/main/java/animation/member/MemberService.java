@@ -85,6 +85,7 @@ public class MemberService {
         return new MemberResponse(
                 member.getId(),
                 member.getLoginId(),
+                member.getNickName(),
                 member.getCharacter() != null ? member.getCharacter().getName() : null,
                 member.getBirth(),
                 member.getImageUrl(),
@@ -130,6 +131,7 @@ public class MemberService {
         return new MemberResponse(
                 member.getId(),
                 member.getLoginId(),
+                member.getNickName(),
                 member.getCharacter().getName(),
                 member.getBirth(),
                 member.getImageUrl(),
@@ -178,6 +180,7 @@ public class MemberService {
         return new MemberResponse(
                 member.getId(),
                 member.getLoginId(),
+                member.getNickName(),
                 member.getCharacter() != null ? member.getCharacter().getName() : null,
                 member.getBirth(),
                 member.getImageUrl(),
