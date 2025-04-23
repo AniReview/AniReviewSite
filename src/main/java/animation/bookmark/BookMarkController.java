@@ -3,6 +3,8 @@ package animation.bookmark;
 import animation.bookmark.dto.*;
 import animation.loginUtils.LoginMember;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,8 +22,11 @@ public class BookMarkController {
     }
 
     @GetMapping("/bookmarks/{memberId}")
-    public BookmarkReadResponse read(@PathVariable Long memberId){
-        return bookMarkService.readAll(memberId);
+    public BookMarkPageResponse read(@PathVariable Long memberId,
+                                     @RequestParam(defaultValue = "1") int page,
+                                     @RequestParam(defaultValue = "10") int size){
+        Pageable pageable = PageRequest.of(page-1, size);
+        return bookMarkService.readAll(memberId, pageable);
     }
 
     @DeleteMapping("/bookmarks/{bookmarkId}")

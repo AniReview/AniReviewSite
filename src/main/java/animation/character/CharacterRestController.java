@@ -22,7 +22,7 @@ public class CharacterRestController {
     }
 
     @GetMapping("/characters")
-    public CharacterPageResponse create(@RequestParam(required = false, defaultValue = "POPULAR") OrderBy orderBy,
+    public CharacterPageResponse findAll(@RequestParam(required = false, defaultValue = "POPULAR") OrderBy orderBy,
                                         @RequestParam(defaultValue = "1") int page,
                                         @RequestParam(defaultValue = "10") int size){
         Pageable pageable = PageRequest.of(page-1, size);

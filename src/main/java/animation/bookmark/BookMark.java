@@ -2,12 +2,13 @@ package animation.bookmark;
 
 import animation.anime.Anime;
 import animation.member.Member;
+import animation.utils.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
 @Getter
 @Entity
-public class BookMark {
+public class BookMark extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
