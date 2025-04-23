@@ -7,5 +7,6 @@ public record MemberCreateRequest(
         String password,
         String nickName,
         Long charId,
-        LocalDate birth) {
+        LocalDate birth,
+        String introduce) {
 }

@@ -75,7 +75,7 @@ public class loveAniTest {
                 123456L                          // malId
         );
         testCharacter = new animation.character.Character("name", "url", "about", 12L);
-        testMember = new Member("loginId", "123", "nickname", testCharacter, LocalDate.of(2000, 1, 1), "url" );
+        testMember = new Member("loginId", "123", "nickname", testCharacter, LocalDate.of(2000, 1, 1), "url","ㅎㅇㅎㅇ" );
         testLoveAni = new LoveAni(testMember, testAnime);
         ReflectionTestUtils.setField(testLoveAni, "id", 1L);
         ReflectionTestUtils.setField(testMember, "id", 1L);
@@ -144,7 +144,7 @@ public class loveAniTest {
     @Test
     @DisplayName("권한이 없으면 좋아요 삭제 실패")
     void 좋아요_삭제_실패2() {
-        Member testMember2 = new Member("loginId", "123", "nickname", testCharacter, LocalDate.of(2000, 1, 1), "url" );
+        Member testMember2 = new Member("loginId", "123", "nickname", testCharacter, LocalDate.of(2000, 1, 1), "url","ㅎㅇㅎㅇ" );
         ReflectionTestUtils.setField(testMember2, "id", 999L);
 
         when(animeRepository.findById(testAnime.getId())).thenReturn(Optional.of(testAnime));
