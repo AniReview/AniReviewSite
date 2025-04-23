@@ -3,7 +3,9 @@ package animation.aniCharacter;
 import animation.AniCharacter.AniCharacterQueryRepository;
 import animation.AniCharacter.AniCharacterRepository;
 import animation.AniCharacter.AniCharacterService;
+import animation.AniCharacter.dto.AniCharPageResponse;
 import animation.AniCharacter.dto.AnimeCharactersResponse;
+import animation.AniCharacter.dto.CharAniPageResponse;
 import animation.AniCharacter.dto.CharacterAnimesResponse;
 import animation.admin.AdminRepository;
 import animation.anime.Anime;
@@ -18,6 +20,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDateTime;
@@ -124,51 +128,81 @@ public class AniCharacterUnitTest {
     @Test
     @DisplayName("애니메이션 캐릭터 조회")
     void getAnimeCharacters() {
+        // given
+        Pageable pageable = PageRequest.of(0, 10);
+
         List<CharacterResponse> characterResponses = List.of(
                 new CharacterResponse(1L, "Character 1", "http://image1.com", 100),
                 new CharacterResponse(2L, "Character 2", "http://image2.com", 200)
         );
 
-        List<AnimeCharactersResponse> expectedResponse = List.of(new AnimeCharactersResponse(anime.getId(), characterResponses));
+        List<AnimeCharactersResponse> animeCharactersResponses = List.of(
+                new AnimeCharactersResponse(anime.getId(), characterResponses)
+        );
 
-        when(aniCharacterQueryRepository.findByAnimeId(anime.getId())).thenReturn(expectedResponse);
+        AniCharPageResponse expectedResponse = new AniCharPageResponse(
+                1,            // totalPage
+                2L,           // totalCount
+                1,            // currentPage
+                10,           // pageSize
+                animeCharactersResponses
+        );
 
-        List<AnimeCharactersResponse> result = aniCharacterService.getAnimeCharacters(anime.getId());
+        // when
+        when(aniCharacterQueryRepository.findByAnimeId(anime.getId(), pageable)).thenReturn(expectedResponse);
 
-        // 결과가 null이 아니고, 사이즈가 1이어야 한다.
+        AniCharPageResponse result = aniCharacterService.getAnimeCharacters(anime.getId(), pageable);
+
+        // then
         assertNotNull(result);
-        assertEquals(1, result.size());
+        assertEquals(expectedResponse.totalPage(), result.totalPage());
+        assertEquals(expectedResponse.totalCount(), result.totalCount());
+        assertEquals(expectedResponse.currentPage(), result.currentPage());
+        assertEquals(expectedResponse.pageSize(), result.pageSize());
+        assertEquals(expectedResponse.animeCharactersResponses(), result.animeCharactersResponses());
 
-        AnimeCharactersResponse actualResponse = result.get(0);
-        assertEquals(expectedResponse.get(0).animeId(), actualResponse.animeId());
-        assertEquals(expectedResponse.get(0).characterResponses(), actualResponse.characterResponses());
-
-        // findByAnimeId가 1번 호출되었는지 확인
-        verify(aniCharacterQueryRepository, times(1)).findByAnimeId(anime.getId());
+        // verify
+        verify(aniCharacterQueryRepository, times(1)).findByAnimeId(anime.getId(), pageable);
     }
+
 
     @Test
     @DisplayName("캐릭터 애니메이션 전체 조회")
-    void getCharacterAnimes() throws Exception {
+    void getCharacterAnimes() {
+        // given
+        Pageable pageable = PageRequest.of(0, 10);
+
         List<AnimeResponse> animeResponses = List.of(
                 new AnimeResponse(1L, "http://image1.com", "title1", 1),
-                new AnimeResponse(2L, "http://image2.com", "title2",2)
+                new AnimeResponse(2L, "http://image2.com", "title2", 2)
         );
 
-        List<CharacterAnimesResponse> expectedResponse = List.of(new CharacterAnimesResponse(character.getId(), animeResponses));
+        List<CharacterAnimesResponse> characterAnimesResponses = List.of(
+                new CharacterAnimesResponse(character.getId(), animeResponses)
+        );
 
-        when(aniCharacterQueryRepository.findByCharId(character.getId())).thenReturn(expectedResponse);
+        CharAniPageResponse expectedResponse = new CharAniPageResponse(
+                1,                // totalPage
+                2L,               // totalCount
+                1,                // currentPage
+                10,               // pageSize
+                characterAnimesResponses
+        );
 
-        List<CharacterAnimesResponse> result = aniCharacterService.getCharacterAnimes(character.getId());
+        // when
+        when(aniCharacterQueryRepository.findByCharId(character.getId(), pageable)).thenReturn(expectedResponse);
 
+        CharAniPageResponse result = aniCharacterService.getCharacterAnimes(character.getId(), pageable);
+
+        // then
         assertNotNull(result);
-        assertEquals(1, result.size());
+        assertEquals(expectedResponse.totalPage(), result.totalPage());
+        assertEquals(expectedResponse.totalCount(), result.totalCount());
+        assertEquals(expectedResponse.currentPage(), result.currentPage());
+        assertEquals(expectedResponse.pageSize(), result.pageSize());
+        assertEquals(expectedResponse.characterAnimesResponses(), result.characterAnimesResponses());
 
-        CharacterAnimesResponse actualResponse = result.get(0);
-        assertEquals(expectedResponse.get(0).characterId(), actualResponse.characterId());
-        assertEquals(expectedResponse.get(0).animeResponseList(), actualResponse.animeResponseList());
-
-        verify(aniCharacterQueryRepository, times(1)).findByCharId(anime.getId());
-
+        verify(aniCharacterQueryRepository, times(1)).findByCharId(character.getId(), pageable);
     }
+
 }
