@@ -7,6 +7,7 @@ public record MemberResponse(
         String loginId,
         String myChar,
         LocalDate birth,
-        String imageUrl
+        String imageUrl,
+        String introduce
 ) {
 }

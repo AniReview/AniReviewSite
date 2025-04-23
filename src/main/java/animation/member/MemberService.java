@@ -73,7 +73,8 @@ public class MemberService {
                 memberCreateRequest.nickName(),
                 character,
                 memberCreateRequest.birth(),
-                profileImageUrl
+                profileImageUrl,
+                memberCreateRequest.introduce()
                 );
 
         memberRepository.save(member);
@@ -86,7 +87,8 @@ public class MemberService {
                 member.getLoginId(),
                 member.getCharacter() != null ? member.getCharacter().getName() : null,
                 member.getBirth(),
-                member.getImageUrl());
+                member.getImageUrl(),
+                member.getIntroduce());
     }
 
     public MemberLoginResponse login(MemberLoginRequest loginRequest) {
@@ -130,7 +132,8 @@ public class MemberService {
                 member.getLoginId(),
                 member.getCharacter().getName(),
                 member.getBirth(),
-                member.getImageUrl());
+                member.getImageUrl(),
+                member.getIntroduce());
 
     }
 
@@ -170,15 +173,15 @@ public class MemberService {
 
         validateNotDeleted(member);
 
-        member.updateProfile(request.nickName(), request.birth());
+        member.updateProfile(request.nickName(), request.birth(), request.introduce());
 
         return new MemberResponse(
                 member.getId(),
                 member.getLoginId(),
                 member.getCharacter() != null ? member.getCharacter().getName() : null,
                 member.getBirth(),
-                member.getImageUrl());
-
+                member.getImageUrl(),
+                member.getIntroduce());
     }
 
 

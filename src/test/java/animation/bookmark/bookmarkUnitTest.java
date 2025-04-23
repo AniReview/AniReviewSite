@@ -74,7 +74,7 @@ public class bookmarkUnitTest {
                 123456L                          // malId
         );
         testCharacter = new animation.character.Character("name", "url", "about", 12L);
-        testMember = new Member("loginId", "123", "nickname", testCharacter, LocalDate.of(2000, 1, 1), "url" );
+        testMember = new Member("loginId", "123", "nickname", testCharacter, LocalDate.of(2000, 1, 1), "url" ,"ㅎㅇㅎㅇ");
         testBookMark = new BookMark(testAnime, testMember);
         ReflectionTestUtils.setField(testBookMark, "id", 1L);
         ReflectionTestUtils.setField(testMember, "id", 1L);
@@ -147,7 +147,7 @@ public class bookmarkUnitTest {
     @DisplayName("북마크 삭제 권한 없음 실패")
     void 북마크_삭제_권한_없음_실패() {
         // given
-        Member otherMember = new Member("loginId", "123", "nickname", testCharacter, LocalDate.of(2000, 1, 1), "url" );
+        Member otherMember = new Member("loginId", "123", "nickname", testCharacter, LocalDate.of(2000, 1, 1), "url","ㅎㅇㅎㅇ" );
         ReflectionTestUtils.setField(otherMember, "id", 2L);
 
         when(memberRepository.findByLoginId(testMember.getLoginId())).thenReturn(Optional.of(otherMember));

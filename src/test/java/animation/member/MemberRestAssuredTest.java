@@ -73,7 +73,7 @@ public class MemberRestAssuredTest {
 
         MemberCreateRequest memberCreateRequest = new MemberCreateRequest(
                 "testId","testpassword","testName",character.getId(),
-                LocalDate.of(1995, 8, 15)
+                LocalDate.of(1995, 8, 15),"ㅎㅇㅎㅇ"
         );
 
         String memberCreateJson = objectMapper.writeValueAsString(memberCreateRequest);
@@ -98,7 +98,7 @@ public class MemberRestAssuredTest {
 
         MemberCreateRequest memberCreateRequest = new MemberCreateRequest(
                 "testId","testpassword","testName",null,
-                LocalDate.of(1995, 8, 15)
+                LocalDate.of(1995, 8, 15),"ㅎㅇㅎㅇ"
         );
 
         String memberCreateJson = objectMapper.writeValueAsString(memberCreateRequest);
@@ -123,7 +123,7 @@ public class MemberRestAssuredTest {
 
         MemberCreateRequest memberCreateRequest = new MemberCreateRequest(
                 "testId","testpassword","testName",null,
-                LocalDate.of(1995, 8, 15)
+                LocalDate.of(1995, 8, 15),"ㅎㅇㅎㅇ"
         );
 
         String memberCreateJson = objectMapper.writeValueAsString(memberCreateRequest);
@@ -155,7 +155,7 @@ public class MemberRestAssuredTest {
 
         MemberCreateRequest memberCreateRequest = new MemberCreateRequest(
                 "testId","testpassword","testName",null,
-                LocalDate.of(1995, 8, 15)
+                LocalDate.of(1995, 8, 15),"ㅎㅇㅎㅇ"
         );
 
         String memberCreateJson = objectMapper.writeValueAsString(memberCreateRequest);
@@ -187,7 +187,7 @@ public class MemberRestAssuredTest {
 
         MemberCreateRequest memberCreateRequest = new MemberCreateRequest(
                 "deleteTestId", "testpassword", "testName", null,
-                LocalDate.of(1995, 8, 15)
+                LocalDate.of(1995, 8, 15),"ㅎㅇㅎㅇ"
         );
 
         String memberCreateJson = objectMapper.writeValueAsString(memberCreateRequest);
@@ -232,7 +232,7 @@ public class MemberRestAssuredTest {
 
         MemberCreateRequest memberCreateRequest = new MemberCreateRequest(
                 "deleteTestId", "testpassword", "testName", null,
-                LocalDate.of(1995, 8, 15)
+                LocalDate.of(1995, 8, 15),"ㅎㅇㅎㅇ"
         );
 
         String memberCreateJson = objectMapper.writeValueAsString(memberCreateRequest);
@@ -281,7 +281,7 @@ public class MemberRestAssuredTest {
 
         MemberCreateRequest memberCreateRequest = new MemberCreateRequest(
                 "testId","testpassword","testName",null,
-                LocalDate.of(1995, 8, 15)
+                LocalDate.of(1995, 8, 15),"ㅎㅇㅎㅇ"
         );
 
         String memberCreateJson = objectMapper.writeValueAsString(memberCreateRequest);
