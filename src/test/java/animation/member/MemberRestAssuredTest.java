@@ -59,6 +59,7 @@ public class MemberRestAssuredTest {
         RestAssured.port = port;
     }
 
+
     @Test
     void 최애캐있는멤버생성Test() throws Exception {
 

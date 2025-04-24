@@ -46,7 +46,7 @@ public class MemberService {
     }
 
     // 로그인 로직 예외처리
-    private Member findByLoginId(String loginId) {
+    public Member findByLoginId(String loginId) {
         return memberRepository.findByLoginId(loginId).orElseThrow(
                 () -> new NoSuchElementException("회원을 찾을 수 없습니다."));
     }

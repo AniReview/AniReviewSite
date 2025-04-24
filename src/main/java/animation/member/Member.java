@@ -8,6 +8,7 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @Getter
 @Entity
@@ -26,7 +27,7 @@ public class Member extends BaseEntity {
 
     private String nickName;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Character character;
 
     private LocalDate birth;
