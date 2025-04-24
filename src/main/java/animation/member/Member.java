@@ -13,6 +13,9 @@ import java.util.NoSuchElementException;
 @Entity
 public class Member extends BaseEntity {
 // 멤버 프로필 업데이트를 어떻게 처리할건지??
+// 실무 패턴에서는 정보수정과 s3 이미지 수정을 따로 분리하는것을 선호 (트랜잭션 관리 용이)
+// 같은 맥락으로 나중에 멤버 생성과 이미지 업로드를 따로 분리하도록 수정해야 할것 같음
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -81,7 +84,9 @@ public class Member extends BaseEntity {
         }
     }
 
-
+    public void imageUpdate(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
 
 }

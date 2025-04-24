@@ -187,5 +187,21 @@ public class MemberService {
                 member.getIntroduce());
     }
 
+    @Transactional
+    public MemberResponse imageUpdate(String loginId, String imageUrl) {
+
+        Member member = findByLoginId(loginId);
+
+        member.imageUpdate(imageUrl);
+
+        return new MemberResponse(
+                member.getId(),
+                member.getLoginId(),
+                member.getNickName(),
+                member.getCharacter() != null ? member.getCharacter().getName() : null,
+                member.getBirth(),
+                member.getImageUrl(),
+                member.getIntroduce());
+    }
 
 }
