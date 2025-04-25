@@ -2,11 +2,12 @@ package animation.friendRequest;
 
 import animation.DatabaseCleanup;
 import animation.S3.S3Service;
+import animation.friendRequest.dto.FriendRequestDto;
+import animation.friendRequest.dto.FriendRequestResponseDto;
 import animation.member.dto.MemberCreateRequest;
 import animation.member.dto.MemberLoginRequest;
 import animation.member.dto.MemberResponse;
 import com.amazonaws.services.s3.AmazonS3;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -17,7 +18,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +26,6 @@ import java.time.LocalDate;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

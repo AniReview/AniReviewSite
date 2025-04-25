@@ -31,9 +31,4 @@ public class FriendRequest {
         this.status = status;
     }
 
-    public void myself(Member receiver) {
-        if (Objects.equals(requester.getId(), receiver.getId())) {
-            throw new RuntimeException("자기 자신입니다.");
-        }
-    }
 }

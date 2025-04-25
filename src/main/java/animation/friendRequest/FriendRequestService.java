@@ -1,12 +1,17 @@
 package animation.friendRequest;
 
 import animation.SelfFriendRequestException;
+import animation.friendRequest.dto.FrListResponse;
+import animation.friendRequest.dto.FrResponse;
+import animation.friendRequest.dto.FriendRequestDto;
+import animation.friendRequest.dto.FriendRequestResponseDto;
 import animation.member.Member;
 import animation.member.MemberRepository;
 import animation.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
@@ -38,4 +43,19 @@ public class FriendRequestService {
 
         return new FriendRequestResponseDto(requestMember.getId(), receiverMember.getId());
     }
+
+    public FrListResponse findAll(String loginId) {
+        List<FriendRequest> all = friendRequestRepository.findAll();
+
+        Member requestMember = memberService.findByLoginId(loginId);
+
+        List<FrResponse> frResponseList = all.stream().map(f -> new FrResponse(
+                f.getReceiver().getId(),
+                f.getReceiver().getNickName(),
+                f.getReceiver().getImageUrl())).toList();
+
+        return new FrListResponse(requestMember.getNickName(), frResponseList);
+    }
+
+
 }
