@@ -1,13 +1,11 @@
 package animation.friendRequest;
 
 import animation.SelfFriendRequestException;
-import animation.friendRequest.dto.FrListResponse;
-import animation.friendRequest.dto.FrResponse;
-import animation.friendRequest.dto.FriendRequestDto;
-import animation.friendRequest.dto.FriendRequestResponseDto;
+import animation.friendRequest.dto.*;
 import animation.member.Member;
 import animation.member.MemberRepository;
 import animation.member.MemberService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -55,6 +53,18 @@ public class FriendRequestService {
                 f.getReceiver().getImageUrl())).toList();
 
         return new FrListResponse(requestMember.getNickName(), frResponseList);
+    }
+
+    @Transactional
+    public FrStatusResponse frDecision(String loginId, Long friendRequestId, Status status) {
+        memberService.findByLoginId(loginId);
+
+        FriendRequest friendRequest = friendRequestRepository.findById(friendRequestId).orElseThrow(() ->
+                new NoSuchElementException("찾을 수 없는 요청입니다. id : " + friendRequestId));
+
+        friendRequest.updateStatus(status);
+
+        return new FrStatusResponse(friendRequest.getId(), friendRequest.getStatus());
     }
 
 
