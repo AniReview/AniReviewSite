@@ -38,8 +38,7 @@ public class S3Service {
                     bucketName,
                     fileName,
                     inputStream,
-                    metadata)
-                    .withCannedAcl(CannedAccessControlList.PublicRead);
+                    metadata);
 
             amazonS3.putObject(putObjectRequest);
         }
@@ -48,11 +47,5 @@ public class S3Service {
         return amazonS3.getUrl(bucketName, fileName).toString();
     }
 
-    private File multiPartFileToFile(MultipartFile file) throws IOException {
-        File convertedFile = new File(file.getOriginalFilename());
-        try (FileOutputStream fileOutputStream = new FileOutputStream(convertedFile)) {
-            fileOutputStream.write(file.getBytes());
-        }
-        return convertedFile;
-    }
+
 }
