@@ -1,5 +1,6 @@
 package animation.member;
 
+import animation.S3.S3Service;
 import animation.character.Character;
 import animation.character.CharacterRepository;
 import animation.loginUtils.JwtProvider;
@@ -21,6 +22,7 @@ public class MemberService {
     private final CharacterRepository characterRepository;
     private final JwtProvider jwtProvider;
     private final MemberQueryRepository memberQueryRepository;
+    private final S3Service s3Service;
 
     // 중복코드 함수로 빼기
     @Transactional
@@ -192,6 +194,10 @@ public class MemberService {
 
         Member member = findByLoginId(loginId);
 
+        String existingImageUrl = member.getImageUrl();
+        if (existingImageUrl != null && !existingImageUrl.isEmpty()) {
+            s3Service.deleteFile(existingImageUrl);
+        }
         member.imageUpdate(imageUrl);
 
         return new MemberResponse(
