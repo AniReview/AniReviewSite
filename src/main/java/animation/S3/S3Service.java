@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -30,7 +31,7 @@ public class S3Service {
     private String bucketName;
 
     public String uploadFile(MultipartFile multipartFile) throws IOException {
-        String fileName = System.currentTimeMillis() + "_" + multipartFile.getOriginalFilename();
+        String fileName = UUID.randomUUID().toString();
 
         // 메타데이터 설정(이미지가 다운로드 되지않도록 inline으로)
         ObjectMetadata metadata = new ObjectMetadata();
