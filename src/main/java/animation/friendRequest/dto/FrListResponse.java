@@ -1,8 +1,10 @@
 package animation.friendRequest.dto;
 
+import animation.member.dto.MemberSimpleDto;
+
 import java.util.List;
 
-public record FrListResponse(String requesterName,List<FrResponse> list) {
+public record FrListResponse(List<MemberSimpleDto> list) {
 }
 
 

@@ -5,6 +5,8 @@ import animation.friendRequest.dto.*;
 import animation.member.Member;
 import animation.member.MemberRepository;
 import animation.member.MemberService;
+import animation.member.dto.MemberListResponse;
+import animation.member.dto.MemberSimpleDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,17 +44,18 @@ public class FriendRequestService {
         return new FriendRequestResponseDto(requestMember.getId(), receiverMember.getId());
     }
 
-    public FrListResponse findAll(String loginId) {
-        List<FriendRequest> all = friendRequestRepository.findAll();
+    public MemberListResponse findAll(String loginId) {
+        Member member = memberService.findByLoginId(loginId);
 
-        Member requestMember = memberService.findByLoginId(loginId);
+        List<Member> requester = friendRequestRepository.findRequesterByReceiver(member);
 
-        List<FrResponse> frResponseList = all.stream().map(f -> new FrResponse(
-                f.getReceiver().getId(),
-                f.getReceiver().getNickName(),
-                f.getReceiver().getImageUrl())).toList();
+        List<MemberSimpleDto> list = requester.stream().map(m -> new MemberSimpleDto(
+                m.getId(),
+                m.getNickName(),
+                m.getCharacter() != null ? m.getCharacter().getName() : null,
+                m.getImageUrl())).toList();
 
-        return new FrListResponse(requestMember.getNickName(), frResponseList);
+        return new MemberListResponse(list);
     }
 
     @Transactional
