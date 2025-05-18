@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>이미지 업로드 & 보기</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        form { margin-bottom: 20px; }
+        img { max-width: 200px; display: inline-block; margin: 8px; }
+        #images { margin-top: 10px; }
+    </style>
+</head>
+<body>
+<h1>이미지 업로드 & 보기</h1>
+
+<!-- 업로드 폼 -->
+<form id="uploadForm">
+    <input type="file" name="images" required />
+    <button type="submit">업로드</button>
+</form>
+
+<!-- 업로드 결과 메시지 -->
+<div id="msg"></div>
+
+<!-- 이미지 목록 -->
+<div id="images">로딩 중…</div>
+
+<script>
+    const form = document.getElementById('uploadForm');
+    const msg = document.getElementById('msg');
+    const container = document.getElementById('images');
+
+    // 1) 페이지 열리면 기존 이미지 불러오기
+    document.addEventListener('DOMContentLoaded', loadImages);
+
+    // 2) 폼 제출할 때 AJAX로 업로드 처리
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      msg.textContent = '업로드 중…';
+      const fd = new FormData(form);
+      try {
+        const res = await fetch('/test/image', {
+          method: 'POST',
+          body: fd
+        });
+        if (!res.ok) throw new Error(res.status);
+        const url = await res.text();  // controller가 String으로 URL 반환
+        msg.textContent = '업로드 성공!';
+        appendImage(url);
+      } catch (err) {
+        msg.textContent = '업로드 실패: ' + err;
+        console.error(err);
+      }
+    });
+
+    // 기존 이미지 불러오는 함수
+    async function loadImages() {
+      try {
+        const res = await fetch('/test/image');
+        const urls = await res.json();
+        container.innerHTML = '';
+        urls.forEach(appendImage);
+      } catch (err) {
+        container.textContent = '이미지 로딩 실패';
+        console.error(err);
+      }
+    }
+
+    // 새로운 <img> 엘리먼트를 추가하는 함수
+    function appendImage(url) {
+      const img = document.createElement('img');
+      img.src = url;
+      container.appendChild(img);
+    }
+</script>
+</body>
+</html>
