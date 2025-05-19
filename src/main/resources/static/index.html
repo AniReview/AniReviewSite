@@ -39,7 +39,8 @@
       msg.textContent = '업로드 중…';
       const fd = new FormData(form);
       try {
-        const res = await fetch('/test/image', {
+     //  const res = await fetch('/test/cloud-front-image',{
+        const res = await fetch('/test/s3-image', {
           method: 'POST',
           body: fd
         });
@@ -56,7 +57,8 @@
     // 기존 이미지 불러오는 함수
     async function loadImages() {
       try {
-        const res = await fetch('/test/image');
+    //   const res = await fetch('/test/cloud-front-image');
+        const res = await fetch('/test/s3-image');
         const urls = await res.json();
         container.innerHTML = '';
         urls.forEach(appendImage);
