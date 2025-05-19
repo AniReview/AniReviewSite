@@ -1,5 +1,6 @@
 package animation.test;
 
+import animation.S3.CloudFrontService;
 import animation.S3.S3Service;
 import animation.loginUtils.LoginMember;
 import animation.member.dto.MemberResponse;
@@ -16,8 +17,9 @@ public class Controller {
 
     private final S3Service s3Service;
     private final Repository repository;
+    private final CloudFrontService cloudFrontService;
 
-    @PostMapping("/test/image")
+    @PostMapping("/test/s3-image")
     public String imageUpdate(@RequestPart(value = "images") MultipartFile files) throws IOException {
         String url = s3Service.uploadFile(files);
         TestEntity testEntity = new TestEntity(url);
@@ -25,9 +27,11 @@ public class Controller {
         return testEntity.getImageUrl();
     }
 
-    @GetMapping("/test/image")
+    @GetMapping("/test/s3-image")
     public List<String> findAll() {
         List<TestEntity> entityList = repository.findAll();
         return entityList.stream().map(t -> t.getImageUrl()).toList();
     }
+
+
 }
